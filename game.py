@@ -38,6 +38,7 @@ def main():
     # Also creating a tuple because some functions take that
     size = width, height = screen_size()
     screen = pygame.display.set_mode(size, vsync=1)
+    pygame.display.set_caption("Dental Guardians")
 
     playing = True
     while playing:
