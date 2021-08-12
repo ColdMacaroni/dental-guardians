@@ -34,7 +34,7 @@ class Menu:
                  text_color=colors.RGB.BLACK, background_color=colors.RGBA.TRANSPARENT,
                  padding=0):
         """
-        :param options: A list of strings that will be the options in the menu
+        :param options: A dict of strings and values to be returned
         :param size: Tuple of size in px
         :param font: Pygame font object
 
@@ -80,7 +80,7 @@ class Menu:
         horizontal_offset = self.padding[-1]
         # Padding from top
         vertical_offset = self.padding[0]
-        for option in self.options:
+        for option in self.options.keys():
             text = self.font.render(option, self.antialias, self.text_color)
             surface.blit(text, (horizontal_offset, vertical_offset))
 
@@ -123,7 +123,7 @@ def main():
 
     status = GameStatus.TITLE_SCREEN
 
-    test_menu = Menu(("Start", "End"), (200, 200), pygame.font.SysFont("Arial", 17))
+    test_menu = Menu({"Start": 1, "End": 0}, (200, 200), pygame.font.SysFont("Arial", 17))
 
     playing = True
     while playing:
