@@ -25,6 +25,28 @@ class GameStatus(Enum):
     DEFEAT = auto()
 
 
+class Menu:
+    """
+    This class lets you create an interactive menu that can be "blited" into a surface
+    """
+    def __init__(self, options, size):
+        """
+        :param options: A list of strings that will be the options in the menu
+        :param size: Tuple of size in px
+        """
+        self.options = options
+        self.size = size
+
+    def get_surface(self):
+        """
+        Returns a pygame surface containing the menu to be blited into another surface
+        :return: Pygame Surface
+        """
+        surface = pygame.Surface(self.size)
+
+        return surface
+
+
 def screen_size():
     """
     This function will return the width and height for the pygame screen
@@ -38,10 +60,6 @@ def screen_size():
 
 
 # -- Pygame
-
-
-# NOTE: Space left for pygame handling functions
-
 
 # --
 
@@ -58,6 +76,8 @@ def main():
     screen = pygame.display.set_mode(size, vsync=1)
     pygame.display.set_caption("Dental Guardians")
 
+    status = GameStatus.TITLE_SCREEN
+
     playing = True
     while playing:
         for event in pygame.event.get():
@@ -66,6 +86,12 @@ def main():
                 playing = False
 
         screen.fill(colors.RGB.WHITE)
+
+        if status is GameStatus.TITLE_SCREEN:
+            pass
+
+        elif status is GameStatus.BATTLE_MENU:
+            pass
 
         # Update display
         pygame.display.flip()
