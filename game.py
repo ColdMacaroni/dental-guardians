@@ -211,6 +211,7 @@ def main():
                 # K_RETURN is enter key
                 elif event.key == pygame.K_RETURN:
                     print(test_menu.get_option())
+                # --
 
         screen.fill(colors.RGB.WHITE)
 
