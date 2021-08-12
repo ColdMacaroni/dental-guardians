@@ -4,9 +4,13 @@
 
 from pygame import Color
 
+class RGBA:
+    TRANSPARENT = Color(255, 255, 255, 0)
+
 
 class RGB:
     WHITE = Color(255, 255, 255)
+    BLACK = Color(0, 0, 0)
 
 
 if __name__ == "__main__":
