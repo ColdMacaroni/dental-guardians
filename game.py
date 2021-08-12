@@ -34,7 +34,7 @@ class Menu:
                  text_offset=0,
                  text_color=colors.RGB.BLACK,
                  text_background=colors.RGBA.TRANSPARENT,
-                 text_selected_color=colors.RGB.YELLOW,
+                 text_selected=colors.RGB.YELLOW,
                  background_color=colors.RGBA.TRANSPARENT,
                  background_image=None,
                  padding=0):
@@ -47,8 +47,9 @@ class Menu:
         :keyword antialias: Bool. True
         :keyword text_offset: Vertical offset for the text in px.
         :keyword text_color: RGB(A). Black
-        :keyword text_background: Background colour for the text.
-        :keyword background_color: Background colour for the menu
+        :keyword text_background: Background color for the text.
+        :keyword text_selected: The background color for the selected text
+        :keyword background_color: Background color for the menu
         :keyword background_image: Image to be blited into the background
         :keyword padding: In pixels, distance from each side of the surface that will not be touched.
                           Can be either an int to signify the same padding on all sides or a tuple
@@ -63,6 +64,7 @@ class Menu:
         self.antialias = antialias
         self.text_color = text_color
         self.text_background = text_background
+        self.text_selected= text_selected
         self.text_offset = text_offset
         self.background_color = background_color
         self.background_image = background_image
@@ -98,8 +100,12 @@ class Menu:
         horizontal_offset = self.padding[-1]
         # Padding from top
         vertical_offset = self.padding[0]
-        for option in self.options.keys():
-            text = self.font.render(option, self.antialias, self.text_color, self.text_background)
+
+        for idx, option in enumerate(self.options.keys()):
+            if idx == self.current_option:
+                text = self.font.render(option, self.antialias, self.text_color, self.text_selected)
+            else:
+                text = self.font.render(option, self.antialias, self.text_color, self.text_background)
             surface.blit(text, (horizontal_offset, vertical_offset))
 
             # get_linesize() should return recommended line size, this way text won't overlap
