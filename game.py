@@ -31,15 +31,25 @@ class Menu:
     """
     def __init__(self, options, size, font: pygame.font.Font,
                  antialias=True,
-                 text_color=colors.RGB.BLACK, background_color=colors.RGBA.TRANSPARENT,
+                 text_offset=0,
+                 text_color=colors.RGB.BLACK,
+                 text_background=colors.RGBA.TRANSPARENT,
+                 text_selected_color=colors.RGB.YELLOW,
+                 background_color=colors.RGBA.TRANSPARENT,
+                 background_image=None,
                  padding=0):
         """
+        :param background_image:
         :param options: A dict of strings and values to be returned
         :param size: Tuple of size in px
         :param font: Pygame font object
 
         :keyword antialias: Bool. True
+        :keyword text_offset: Vertical offset for the text in px.
         :keyword text_color: RGB(A). Black
+        :keyword text_background: Background colour for the text.
+        :keyword background_color: Background colour for the menu
+        :keyword background_image: Image to be blited into the background
         :keyword padding: In pixels, distance from each side of the surface that will not be touched.
                           Can be either an int to signify the same padding on all sides or a tuple
                           of length 4 if you want to be specific. Clockwise.
@@ -52,7 +62,10 @@ class Menu:
         # Keywords
         self.antialias = antialias
         self.text_color = text_color
+        self.text_background = text_background
+        self.text_offset = text_offset
         self.background_color = background_color
+        self.background_image = background_image
 
         # Validate padding
         if isinstance(padding, int):
@@ -73,19 +86,24 @@ class Menu:
         Returns a pygame surface containing the menu to be blited into another surface
         :return: Pygame Surface
         """
+        # SRCALPHA needed to support RGBA colours. Slow.
         surface = pygame.Surface(self.size, flags=pygame.SRCALPHA)
         surface.fill(self.background_color)
+
+        if self.background_image is not None:
+            surface.blit(self.background_image, (0, 0))
+
         # Offsets arent tuples so that they can be reassigned
         # Padding from left
         horizontal_offset = self.padding[-1]
         # Padding from top
         vertical_offset = self.padding[0]
         for option in self.options.keys():
-            text = self.font.render(option, self.antialias, self.text_color)
+            text = self.font.render(option, self.antialias, self.text_color, self.text_background)
             surface.blit(text, (horizontal_offset, vertical_offset))
 
-            # get_linesize should return recommended line size, this way text won't overlap
-            vertical_offset += self.font.get_linesize()
+            # get_linesize() should return recommended line size, this way text won't overlap
+            vertical_offset += self.font.get_linesize() + self.text_offset
 
         return surface
 
@@ -123,7 +141,13 @@ def main():
 
     status = GameStatus.TITLE_SCREEN
 
-    test_menu = Menu({"Start": 1, "End": 0}, (200, 200), pygame.font.SysFont("Arial", 17))  # TEST
+    test_menu = Menu({"Start": 1, "End": 0},
+                     (200, 200),
+                     pygame.font.SysFont("Arial", 17),
+                     padding=10,
+                     text_offset=10,
+                     background_color=(97, 34, 212),
+                     text_background=(235, 132, 221, 128))  # TEST
 
     playing = True
     while playing:
@@ -145,6 +169,7 @@ def main():
         # Update display
         pygame.display.flip()
 
+        # print(clock.get_fps())
         clock.tick(60)  # fps
 
     # Clean up and say bye
