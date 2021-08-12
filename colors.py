@@ -12,6 +12,14 @@ class RGB:
     WHITE = Color(255, 255, 255)
     BLACK = Color(0, 0, 0)
 
+    RED = (255, 0, 0)
+    GREEN = (255, 0, 0)
+    BLUE = (255, 0, 0)
+
+    YELLOW = (255, 255, 0)
+    LIGHT_BLUE = (0, 255, 255)
+    PINK = (255, 0, 255)
+
 
 if __name__ == "__main__":
     # Print defined colours
