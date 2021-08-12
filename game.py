@@ -123,7 +123,7 @@ def main():
 
     status = GameStatus.TITLE_SCREEN
 
-    test_menu = Menu({"Start": 1, "End": 0}, (200, 200), pygame.font.SysFont("Arial", 17))
+    test_menu = Menu({"Start": 1, "End": 0}, (200, 200), pygame.font.SysFont("Arial", 17))  # TEST
 
     playing = True
     while playing:
@@ -140,8 +140,7 @@ def main():
         elif status is GameStatus.BATTLE_MENU:
             pass
 
-        screen.blit(test_menu.get_surface(), (5, 5))
-
+        screen.blit(test_menu.get_surface(), (5, 5))  # TEST
 
         # Update display
         pygame.display.flip()
