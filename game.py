@@ -1,10 +1,28 @@
 #!/usr/bin/env python3
 # game.py
 # A game for teaching kids about dental hygiene
+
+# Local library imports
 import colors
 
+# Global library imports
 import pygame
+from enum import Enum, auto
 # Import os for os.path.join(), it'll be useful for cross compatibility
+
+
+class GameStatus(Enum):
+    """
+    These enum objects will be used to keep track of what the game is doing
+    """
+    TITLE_SCREEN = auto()
+    BATTLE_MENU = auto()
+    ITEM_MENU = auto()
+    WEAPON_MENU = auto()
+    PLAYER_ATTACK = auto()
+    ENEMY_ATTACK = auto()
+    VICTORY = auto()
+    DEFEAT = auto()
 
 
 def screen_size():
