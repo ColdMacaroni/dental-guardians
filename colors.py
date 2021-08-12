@@ -2,8 +2,11 @@
 # colors.py
 # A bunch of color constants for importing
 
+from pygame import Color
+
+
 class RGB:
-    WHITE = (255, 255, 255)
+    WHITE = Color(255, 255, 255)
 
 
 if __name__ == "__main__":
