@@ -8,6 +8,7 @@ import colors
 # Global library imports
 import pygame
 from enum import Enum, auto
+from itertools import islice
 # Import os for os.path.join(), it'll be useful for cross compatibility
 
 
@@ -83,6 +84,42 @@ class Menu:
         # Start at first option
         self.current_option = 0
 
+    def update_option(self, diff):
+        """
+        Changes the current option
+        :param diff: Value to be added to the current option
+        """
+        self.current_option += diff
+
+        # Wrap around should support changes of more than 1
+        num_options = len(self.options)
+
+        if self.current_option >= num_options:
+            self.current_option %= num_options
+
+        elif self.current_option < 0:
+            self.current_option = num_options - 1
+
+    def get_option(self, option=None):
+        """
+        Returns the value of the currently selected options
+        :param option: Optional override to self.current_option
+        :return: Any
+        """
+        opt = self.current_option if option is None else option
+
+        # The following code has been adapted from https://stackoverflow.com/a/59740280
+        # Changed variable names and used the result of the second next as key for dict
+        it = iter(self.options)
+
+        # Consume n elements.
+        next(islice(it, opt, opt), None)
+
+        # Return the value at the current position.
+        # This raises StopIteration if n is beyond the limits.
+        # Use next(it, None) to suppress that exception.
+        return self.options[next(it)]
+
     def get_surface(self):
         """
         Returns a pygame surface containing the menu to be blited into another surface
@@ -147,7 +184,7 @@ def main():
 
     status = GameStatus.TITLE_SCREEN
 
-    test_menu = Menu({"Start": 1, "End": 0},
+    test_menu = Menu({"Start": "Yes you started the game", "Credits": "Me", "End": "Noo dont end"},
                      (200, 200),
                      pygame.font.SysFont("Arial", 17),
                      padding=10,
@@ -161,6 +198,19 @@ def main():
             # Mark current loop as last
             if event.type == pygame.QUIT:
                 playing = False
+
+            elif event.type == pygame.KEYDOWN:
+
+                # -- FOR TEST PURPOSES, DEMONSTRATES BASIC FUNCTIONALITY OF TEST MENU
+                if event.key == pygame.K_UP:
+                    test_menu.update_option(-1)
+
+                elif event.key == pygame.K_DOWN:
+                    test_menu.update_option(1)
+
+                # K_RETURN is enter key
+                elif event.key == pygame.K_RETURN:
+                    print(test_menu.get_option())
 
         screen.fill(colors.RGB.WHITE)
 
