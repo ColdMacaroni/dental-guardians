@@ -12,14 +12,17 @@ class RGB:
     WHITE = Color(255, 255, 255)
     BLACK = Color(0, 0, 0)
 
-    RED = (255, 0, 0)
-    GREEN = (255, 0, 0)
-    BLUE = (255, 0, 0)
+    RED = Color(255, 0, 0)
+    GREEN = Color(255, 0, 0)
+    BLUE = Color(255, 0, 0)
 
-    YELLOW = (255, 255, 0)
-    LIGHT_BLUE = (0, 255, 255)
-    PINK = (255, 0, 255)
+    YELLOW = Color(255, 255, 0)
+    LIGHT_BLUE = Color(0, 255, 255)
+    PINK = Color(255, 0, 255)
 
+# these ones are out here cause theyre independent of rgb(a)
+MENU_BACKGROUND = Color(240, 204, 86, 128)
+MENU_HIGHLIGHTED = Color(240, 204, 86, 128)
 
 if __name__ == "__main__":
     # Print defined colours

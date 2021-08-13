@@ -261,7 +261,7 @@ def main():
                                   (200, 140),
                                   pygame.font.SysFont("Arial", 34),
                                   padding=5,
-                                  background_color=(34,54,63,128))
+                                  background_color=colors.MENU_BACKGROUND)
 
                 active_overlay = generate_title("Dental Guardian",
                                                 pygame.font.SysFont("Arial", 64),
