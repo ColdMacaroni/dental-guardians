@@ -205,7 +205,7 @@ def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK, b
 
         title_screen.blit(resized_img, (0, 0))
 
-    title_screen.blit(title_font.render(title, True, text_color, background_color), (30, size[1] // 10))
+    title_screen.blit(title_font.render(title, True, text_color, background_color), (30, size[1] // 2))
 
     return title_screen
 
@@ -249,7 +249,7 @@ def main():
 
                     # K_RETURN is enter key
                     elif event.key == pygame.K_RETURN:
-                        print(active_menu.get_option())
+                        status = active_menu.get_option()
 
         screen.fill(colors.RGB.WHITE)
 
@@ -258,29 +258,33 @@ def main():
                 title_menu = Menu({"Start": GameStatus.BATTLE_START,
                                    "Credits": GameStatus.CREDITS,
                                    "Exit": GameStatus.EXIT},
-                                  (200, 150),
+                                  (200, 140),
                                   pygame.font.SysFont("Arial", 34),
                                   padding=5,
-                                  background_color=(34,54,63,2))
+                                  background_color=(34,54,63,128))
 
-                active_overlay = generate_title( "",#"Dental Guardians",
+                active_overlay = generate_title("Dental Guardian",
                                                 pygame.font.SysFont("Arial", 64),
                                                 image=pygame.image.load(
                                                   os.path.join("images", "titlescreen.png")
-                                                ))
+                                                ),
+                                                background_color=colors.RGB.WHITE)
                 active_menu = title_menu
-                active_menu_offset = (width//3, height//2)
+                active_menu_offset = (30, height - (height//3))
 
         elif status is GameStatus.BATTLE_MENU:
             pass
 
         if active_overlay is not None:
-            screen.blit(active_overlay, (0, 0))
+            if isinstance(active_overlay, list):
+                for overlay in active_overlay:
+                    screen.blit(overlay, (0, 0))
 
-        # if active_menu is not None:
-        #     screen.blit(active_menu.get_surface(), active_menu_offset)
+            else:
+                screen.blit(active_overlay, (0, 0))
 
-        #screen.blit(test_menu.get_surface(), (200, 200))  # TEST
+        if active_menu is not None:
+            screen.blit(active_menu.get_surface(), active_menu_offset)
 
         # Update display
         pygame.display.flip()
