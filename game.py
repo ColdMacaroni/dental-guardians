@@ -39,7 +39,7 @@ class Menu:
                  antialias=True,
                  text_offset=0,
                  text_color=colors.RGB.BLACK,
-                 text_background=colors.RGBA.TRANSPARENT,
+                 text_background=None,
                  text_selected=colors.RGB.YELLOW,
                  background_color=colors.RGBA.TRANSPARENT,
                  background_image=None,
@@ -165,18 +165,19 @@ def screen_size():
     python does not support constants.
     :return: x, y tuple
     """
-    return 600, 400
+    return 800, 600
 
 
 # -- Pygame
-def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK):
+def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK, background_color=None):
     """
     Creates a title screen!
     :param image: blitable background
     :param title: String
     :param title_font: pygame font
 
-    :param text_color: Menu and title font color
+    :param text_color: Title font color
+    :param background_color: Bg color
 
     :return: surface to be blited
     """
@@ -185,9 +186,26 @@ def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK):
     title_screen = pygame.Surface(size, flags=pygame.SRCALPHA)
 
     if image is not None:
-        title_screen.blit(image, (0, 0))
+        # Resize image to fit
+        img_size = image.get_size()
 
-    title_screen.blit(title_font.render(title, True, text_color), (30, size[1] // 10))
+        # Get index of smallest side
+        smallest = 0 if img_size[0] < img_size[1] else 1
+
+        # Fill with place holders
+        new_img_size = [0, 0]
+
+        # Make smallest size of target
+        new_img_size[smallest] = size[smallest]
+
+        # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
+        new_img_size[not smallest] = round((new_img_size[smallest] / img_size[smallest]) * img_size[not smallest])
+
+        resized_img = pygame.transform.scale(image, new_img_size)
+
+        title_screen.blit(resized_img, (0, 0))
+
+    title_screen.blit(title_font.render(title, True, text_color, background_color), (30, size[1] // 10))
 
     return title_screen
 
@@ -241,9 +259,11 @@ def main():
                                    "Credits": GameStatus.CREDITS,
                                    "Exit": GameStatus.EXIT},
                                   (200, 150),
-                                  pygame.font.SysFont("Arial", 34))
+                                  pygame.font.SysFont("Arial", 34),
+                                  padding=5,
+                                  background_color=(34,54,63,2))
 
-                active_overlay = generate_title("Dental Guardians",
+                active_overlay = generate_title( "",#"Dental Guardians",
                                                 pygame.font.SysFont("Arial", 64),
                                                 image=pygame.image.load(
                                                   os.path.join("images", "titlescreen.png")
@@ -257,8 +277,8 @@ def main():
         if active_overlay is not None:
             screen.blit(active_overlay, (0, 0))
 
-        if active_menu is not None:
-            screen.blit(active_menu.get_surface(), active_menu_offset)
+        # if active_menu is not None:
+        #     screen.blit(active_menu.get_surface(), active_menu_offset)
 
         #screen.blit(test_menu.get_surface(), (200, 200))  # TEST
 
