@@ -3,13 +3,15 @@
 # A game for teaching kids about dental hygiene
 
 # Local library imports
+import pathlib
+
 import colors
 
 # Global library imports
 import pygame
 from enum import Enum, auto
 from itertools import islice
-# Import os for os.path.join(), it'll be useful for cross compatibility
+import os
 
 
 class GameStatus(Enum):
@@ -167,41 +169,27 @@ def screen_size():
 
 
 # -- Pygame
-def generate_title(title, title_font, image=None, menu=None, text_color=colors.RGB.BLACK, menu_font=None, options=None):
+def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK):
     """
     Creates a title screen!
     :param image: blitable background
     :param title: String
     :param title_font: pygame font
 
-    :param menu: Menu obj to use
     :param text_color: Menu and title font color
-    :param menu_font: Font for the menu!
-    :param options: Dict. Menu options
 
-    :return: surface to be blited and menu object
+    :return: surface to be blited
     """
-    if options is None:
-        options = {"Start": GameStatus.BATTLE_START,
-                   "Credits": GameStatus.CREDITS,
-                   "Exit": GameStatus.EXIT}
-
     size = screen_size()
 
     title_screen = pygame.Surface(size, flags=pygame.SRCALPHA)
+
     if image is not None:
         title_screen.blit(image, (0, 0))
 
-    title_screen.blit(title_font.render(title, True, text_color), (10, size[1] // 5))
+    title_screen.blit(title_font.render(title, True, text_color), (30, size[1] // 10))
 
-    if menu is None:
-        if menu_font is None:
-            menu_font = pygame.font.SysFont(pygame.font.get_default_font(), 16)
-        title_menu = Menu(options, (size[0] // 3, size[1] // 3), menu_font)
-    else:
-        title_menu = menu
-
-    return title_screen, title_menu
+    return title_screen
 
 # --
 
@@ -217,7 +205,7 @@ def main():
 
     # Also creating a tuple because some functions take that
     size = width, height = screen_size()
-    screen = pygame.display.set_mode(size, vsync=1)
+    screen = pygame.display.set_mode(size, vsync=1, flags=pygame.SRCALPHA)
     pygame.display.set_caption("Dental Guardians")
 
     active_menu = None
@@ -225,14 +213,6 @@ def main():
     active_overlay = None
 
     status = GameStatus.TITLE_SCREEN
-
-    test_menu = Menu({"Start": "Yes you started the game", "Credits": "Me", "End": "Noo dont end"},
-                     (200, 200),
-                     pygame.font.SysFont("Arial", 17),
-                     padding=10,
-                     text_offset=10,
-                     background_color=(97, 34, 212),
-                     text_background=(235, 132, 221, 128))  # TEST
 
     playing = True
     while playing:
@@ -242,36 +222,45 @@ def main():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
+                if active_menu is not None:
+                    if event.key == pygame.K_UP:
+                        active_menu.update_option(-1)
 
-                # -- FOR TEST PURPOSES, DEMONSTRATES BASIC FUNCTIONALITY OF TEST MENU
-                if event.key == pygame.K_UP:
-                    test_menu.update_option(-1)
+                    elif event.key == pygame.K_DOWN:
+                        active_menu.update_option(1)
 
-                elif event.key == pygame.K_DOWN:
-                    test_menu.update_option(1)
-
-                # K_RETURN is enter key
-                elif event.key == pygame.K_RETURN:
-                    print(test_menu.get_option())
-                # --
+                    # K_RETURN is enter key
+                    elif event.key == pygame.K_RETURN:
+                        print(active_menu.get_option())
 
         screen.fill(colors.RGB.WHITE)
 
         if status is GameStatus.TITLE_SCREEN:
             if active_overlay is None and active_menu is None:
-                active_overlay, active_menu = generate_title("Dental Guardians", pygame.font.SysFont("Arial", 16))
-                active_menu_offset = (15, 20)
+                title_menu = Menu({"Start": GameStatus.BATTLE_START,
+                                   "Credits": GameStatus.CREDITS,
+                                   "Exit": GameStatus.EXIT},
+                                  (200, 150),
+                                  pygame.font.SysFont("Arial", 34))
+
+                active_overlay = generate_title("Dental Guardians",
+                                                pygame.font.SysFont("Arial", 64),
+                                                image=pygame.image.load(
+                                                  os.path.join("images", "titlescreen.png")
+                                                ))
+                active_menu = title_menu
+                active_menu_offset = (width//3, height//2)
 
         elif status is GameStatus.BATTLE_MENU:
             pass
 
-        screen.blit(test_menu.get_surface(), (200, 200))  # TEST
+        if active_overlay is not None:
+            screen.blit(active_overlay, (0, 0))
 
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
 
-        if active_overlay is not None:
-            screen.blit(active_overlay, (0, 0))
+        #screen.blit(test_menu.get_surface(), (200, 200))  # TEST
 
         # Update display
         pygame.display.flip()
