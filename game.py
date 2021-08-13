@@ -174,9 +174,11 @@ def generate_title(title, title_font, image=None, menu=None, text_color=colors.R
     :param title: String
     :param title_font: pygame font
 
-    :param text_color: Menu and title font color
     :param menu: Menu obj to use
+    :param text_color: Menu and title font color
+    :param menu_font: Font for the menu!
     :param options: Dict. Menu options
+
     :return: surface to be blited and menu object
     """
     if options is None:
@@ -193,7 +195,9 @@ def generate_title(title, title_font, image=None, menu=None, text_color=colors.R
     title_screen.blit(title_font.render(title, True, text_color), (10, size[1] // 5))
 
     if menu is None:
-        title_menu = Menu(options, (size[0] // 3, size[1] // 3), font)
+        if menu_font is None:
+            menu_font = pygame.font.SysFont(pygame.font.get_default_font(), 16)
+        title_menu = Menu(options, (size[0] // 3, size[1] // 3), menu_font)
     else:
         title_menu = menu
 
@@ -261,7 +265,8 @@ def main():
         elif status is GameStatus.BATTLE_MENU:
             pass
 
-        # screen.blit(test_menu.get_surface(), (5, 5))  # TEST
+        screen.blit(test_menu.get_surface(), (200, 200))  # TEST
+
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
 
