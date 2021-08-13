@@ -17,6 +17,9 @@ class GameStatus(Enum):
     These enum objects will be used to keep track of what the game is doing
     """
     TITLE_SCREEN = auto()
+    CREDITS = auto()
+    EXIT = auto()
+    BATTLE_START = auto()
     BATTLE_MENU = auto()
     ITEM_MENU = auto()
     WEAPON_MENU = auto()
@@ -164,6 +167,37 @@ def screen_size():
 
 
 # -- Pygame
+def generate_title(title, title_font, image=None, menu=None, text_color=colors.RGB.BLACK, menu_font=None, options=None):
+    """
+    Creates a title screen!
+    :param image: blitable background
+    :param title: String
+    :param title_font: pygame font
+
+    :param text_color: Menu and title font color
+    :param menu: Menu obj to use
+    :param options: Dict. Menu options
+    :return: surface to be blited and menu object
+    """
+    if options is None:
+        options = {"Start": GameStatus.BATTLE_START,
+                   "Credits": GameStatus.CREDITS,
+                   "Exit": GameStatus.EXIT}
+
+    size = screen_size()
+
+    title_screen = pygame.Surface(size, flags=pygame.SRCALPHA)
+    if image is not None:
+        title_screen.blit(image, (0, 0))
+
+    title_screen.blit(title_font.render(title, True, text_color), (10, size[1] // 5))
+
+    if menu is None:
+        title_menu = Menu(options, (size[0] // 3, size[1] // 3), font)
+    else:
+        title_menu = menu
+
+    return title_screen, title_menu
 
 # --
 
@@ -181,6 +215,10 @@ def main():
     size = width, height = screen_size()
     screen = pygame.display.set_mode(size, vsync=1)
     pygame.display.set_caption("Dental Guardians")
+
+    active_menu = None
+    active_menu_offset = None
+    active_overlay = None
 
     status = GameStatus.TITLE_SCREEN
 
@@ -216,12 +254,19 @@ def main():
         screen.fill(colors.RGB.WHITE)
 
         if status is GameStatus.TITLE_SCREEN:
-            pass
+            if active_overlay is None and active_menu is None:
+                active_overlay, active_menu = generate_title("Dental Guardians", pygame.font.SysFont("Arial", 16))
+                active_menu_offset = (15, 20)
 
         elif status is GameStatus.BATTLE_MENU:
             pass
 
-        screen.blit(test_menu.get_surface(), (5, 5))  # TEST
+        # screen.blit(test_menu.get_surface(), (5, 5))  # TEST
+        if active_menu is not None:
+            screen.blit(active_menu.get_surface(), active_menu_offset)
+
+        if active_overlay is not None:
+            screen.blit(active_overlay, (0, 0))
 
         # Update display
         pygame.display.flip()
