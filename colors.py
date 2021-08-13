@@ -21,7 +21,8 @@ class RGB:
     PINK = Color(255, 0, 255)
 
 # these ones are out here cause theyre independent of rgb(a)
-MENU_BACKGROUND = Color(240, 204, 86, 128)
+#Color(225, 63, 240, 128)
+MENU_BACKGROUND = RGB.WHITE
 MENU_HIGHLIGHTED = Color(240, 204, 86, 128)
 
 if __name__ == "__main__":
