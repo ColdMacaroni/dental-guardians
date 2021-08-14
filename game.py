@@ -9,9 +9,10 @@ import colors
 
 # Global library imports
 import pygame
+import os
+from random import choice
 from enum import Enum, auto
 from itertools import islice
-import os
 
 
 class GameStatus(Enum):
@@ -156,6 +157,10 @@ class Menu:
         return surface
 
 
+class Enemy:
+    def __init__(self, name, sprites, hp, weakness):
+        ...
+
 def screen_size():
     """
     This function will return the width and height for the pygame screen
@@ -230,6 +235,9 @@ def main():
     active_menu_offset = None
     active_overlay = None
 
+    enemies = []
+    enemy = None
+
     status = GameStatus.TITLE_SCREEN
 
     playing = True
@@ -253,6 +261,7 @@ def main():
 
         screen.fill(colors.RGB.WHITE)
 
+        # This would be so nice with a switch case (or match)
         if status is GameStatus.TITLE_SCREEN:
             if active_overlay is None and active_menu is None:
                 title_menu = Menu({"Start": GameStatus.BATTLE_START,
@@ -274,8 +283,11 @@ def main():
                 active_menu_offset = (30, height - (height//3))
 
         elif status is GameStatus.BATTLE_MENU:
-            pass
+            if enemy is None:
+                enemy = choice(enemies)
 
+
+        # -- Put the stuff
         if active_overlay is not None:
             if isinstance(active_overlay, list):
                 for overlay in active_overlay:
