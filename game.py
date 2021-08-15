@@ -286,6 +286,9 @@ def main():
             if enemy is None:
                 enemy = choice(enemies)
 
+        elif status is GameStatus.EXIT:
+            playing = False
+
 
         # -- Put the stuff
         if active_overlay is not None:
