@@ -32,6 +32,15 @@ class GameStatus(Enum):
     DEFEAT = auto()
 
 
+class WeaponTypes(Enum):
+    """
+    These enum objects will be used to keep track of what the game is doing
+    """
+    BRUSH = auto()
+    FLOSS = auto()
+    # = auto()
+
+
 class Menu:
     """
     This class lets you create an interactive menu that can be "blited" into a surface
@@ -158,8 +167,28 @@ class Menu:
 
 
 class Enemy:
-    def __init__(self, name, sprites, hp, weakness):
-        ...
+    def __init__(self, name, sprites, hp, weakness=None):
+        """
+
+        :param name: The name of the enemy
+        :param sprites: A dictionary of pygame images.
+        :param hp: Int. Health points
+        :param weakness: WeaponTypes attribute
+        """
+        self.name = name
+        self.hp = self.max_hp = hp
+        self.weakness = weakness
+
+        # Check that sprites actually exit
+        for key in ["idle", "hurt", "attacked", "defeat"]:
+            assert key in sprites, f"{key} sprite no found in sprites: {sprites}"
+
+        # Set sprites to different objects
+        self.sprite_idle = sprites["idle"]
+        self.sprite_hurt = sprites["hurt"]
+        self.sprite_attacked = sprites["attacked"]
+        self.sprite_defeat = sprites["defeat"]
+
 
 def screen_size():
     """
@@ -289,10 +318,10 @@ def main():
         elif status is GameStatus.EXIT:
             playing = False
 
-
         # -- Put the stuff
         if active_overlay is not None:
             if isinstance(active_overlay, list):
+                # TODO: Figure out how to use blits
                 for overlay in active_overlay:
                     screen.blit(overlay, (0, 0))
 
@@ -301,6 +330,11 @@ def main():
 
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
+
+        screen.fill(colors.RGB.WHITE)
+        test = pygame.image.load("images/caries/idle.png").convert()
+        test.set_colorkey(colors.RGB.BLACK)
+        screen.blit(test, (0,0))
 
         # Update display
         pygame.display.flip()
