@@ -332,9 +332,9 @@ def main():
             screen.blit(active_menu.get_surface(), active_menu_offset)
 
         screen.fill(colors.RGB.WHITE)
-        test = pygame.image.load("images/caries/idle.png").convert()
+        test = pygame.image.load("images/enemies/caries/idle.png").convert()
         test.set_colorkey(colors.RGB.BLACK)
-        screen.blit(test, (0,0))
+        screen.blit(test, (0, 0))
 
         # Update display
         pygame.display.flip()
