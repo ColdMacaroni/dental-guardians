@@ -201,8 +201,6 @@ class Enemy:
                 print(f"{sprite}.png does not exist for {self.name}")
 
 
-
-
 def screen_size():
     """
     This function will return the width and height for the pygame screen
@@ -272,6 +270,7 @@ def load_enemies(enemy_folder, hp=40):
         enemies[enemy].load_sprites(os.path.join(enemy_folder, enemy))
 
     return enemies
+
 
 # --
 
@@ -361,10 +360,6 @@ def main():
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
 
-        screen.fill(colors.RGB.WHITE)
-        test = pygame.image.load("images/enemies/caries/idle.png").convert()
-        test.set_colorkey(colors.RGB.BLACK)
-        screen.blit(test, (0, 0))
 
         # Update display
         pygame.display.flip()
