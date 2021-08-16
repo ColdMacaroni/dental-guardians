@@ -3,8 +3,6 @@
 # A game for teaching kids about dental hygiene
 
 # Local library imports
-import pathlib
-
 import colors
 
 # Global library imports
@@ -167,11 +165,9 @@ class Menu:
 
 
 class Enemy:
-    def __init__(self, name, sprites, hp, weakness=None):
+    def __init__(self, name, hp, weakness=None):
         """
-
         :param name: The name of the enemy
-        :param sprites: A dictionary of pygame images.
         :param hp: Int. Health points
         :param weakness: WeaponTypes attribute
         """
@@ -179,15 +175,32 @@ class Enemy:
         self.hp = self.max_hp = hp
         self.weakness = weakness
 
-        # Check that sprites actually exit
-        for key in ["idle", "hurt", "attacked", "defeat"]:
-            assert key in sprites, f"{key} sprite no found in sprites: {sprites}"
+        self.sprites = {"idle": None,
+                        "hurt": None,
+                        "attack": None,
+                        "defeated": None}
 
-        # Set sprites to different objects
-        self.sprite_idle = sprites["idle"]
-        self.sprite_hurt = sprites["hurt"]
-        self.sprite_attacked = sprites["attacked"]
-        self.sprite_defeat = sprites["defeat"]
+    def load_sprites(self, folder):
+        """
+        Load the sprites into this thing!
+        :param folder: A Folder containing idle.png
+                                           hurt.png
+                                           attack.png
+                                           defeated.png
+        """
+        for sprite in self.sprites.keys():
+            try:
+                # Convert returns a faster to draw image.
+                tmp = pygame.image.load(f"{os.path.join(folder, sprite)}.png").convert()
+
+                # I like how images look with the black color key
+                tmp.set_colorkey(colors.RGB.BLACK)
+                self.sprites[sprite] = tmp
+
+            except FileNotFoundError:
+                print(f"{sprite}.png does not exist for {self.name}")
+
+
 
 
 def screen_size():
@@ -202,7 +215,7 @@ def screen_size():
     return 800, 600
 
 
-# -- Pygame
+# -- Game
 def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK, background_color=None):
     """
     Creates a title screen!
@@ -243,6 +256,23 @@ def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK, b
 
     return title_screen
 
+
+def load_enemies(enemy_folder, hp=40):
+    """
+    Loads enemies from the enemy folder, using the folder names as enemy names
+    :param enemy_folder: A string to a folder containing folders
+    :param hp: HP points for each enemy to have
+    :return: A dict of Enemy objects
+    """
+    enemy_folders = [folder for folder in os.listdir(enemy_folder) if os.path.isdir(os.path.join(enemy_folder, folder))]
+    enemies = dict()
+    for enemy in enemy_folders:
+        enemies[enemy] = Enemy(enemy, hp)
+
+        enemies[enemy].load_sprites(os.path.join(enemy_folder, enemy))
+
+    return enemies
+
 # --
 
 
@@ -264,8 +294,8 @@ def main():
     active_menu_offset = None
     active_overlay = None
 
-    enemies = []
-    enemy = None
+    enemies = load_enemies(os.path.join("images", "enemies"))
+    print(enemies)
 
     status = GameStatus.TITLE_SCREEN
 
