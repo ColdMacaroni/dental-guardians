@@ -294,7 +294,9 @@ def main():
     active_overlay = None
 
     enemies = load_enemies(os.path.join("images", "enemies"))
-    print(enemies)
+    enemy = None
+
+    # TODO: Generate dictionary for the menus.
 
     status = GameStatus.TITLE_SCREEN
 
@@ -315,13 +317,22 @@ def main():
 
                     # K_RETURN is enter key
                     elif event.key == pygame.K_RETURN:
+                        # Update status
                         status = active_menu.get_option()
+
+                        # Reset active overlay and menu
+                        active_menu = None
+                        active_overlay = None
 
         screen.fill(colors.RGB.WHITE)
 
         # This would be so nice with a switch case (or match)
         if status is GameStatus.TITLE_SCREEN:
-            if active_overlay is None and active_menu is None:
+            if active_overlay is None:
+                active_menu = title_menu
+                active_menu_offset = (30, height - (height // 3))
+
+            if active_menu is None:
                 title_menu = Menu({"Start": GameStatus.BATTLE_START,
                                    "Credits": GameStatus.CREDITS,
                                    "Exit": GameStatus.EXIT},
@@ -337,12 +348,14 @@ def main():
                                                   os.path.join("images", "titlescreen.png")
                                                 ),
                                                 background_color=colors.RGB.WHITE)
-                active_menu = title_menu
-                active_menu_offset = (30, height - (height//3))
 
-        elif status is GameStatus.BATTLE_MENU:
+
+        elif status is GameStatus.BATTLE_START:
             if enemy is None:
-                enemy = choice(enemies)
+                enemy = choice(list(enemies.values()))
+
+            if active_overlay is None:
+                pass
 
         elif status is GameStatus.EXIT:
             playing = False
