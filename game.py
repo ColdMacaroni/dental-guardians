@@ -343,10 +343,12 @@ def main():
     menu_offsets = generate_menu_offsets()
     overlays = generate_overlays()
 
+    active_menu = None
+    active_menu_offset = None
+    active_overlay = None
+
     enemies = load_enemies(os.path.join("images", "enemies"))
     enemy = None
-
-    # TODO: Generate dictionary for the menus.
 
     status = GameStatus.TITLE_SCREEN
 
@@ -354,10 +356,6 @@ def main():
     while playing:
         # Set the actives to the current status, before events so that
         # keys can affect active menu
-        active_menu = menus[status]
-        active_menu_offset = menu_offsets[status]
-        active_overlay = overlays[status]
-
         for event in pygame.event.get():
             # Mark current loop as last
             if event.type == pygame.QUIT:
@@ -384,18 +382,31 @@ def main():
 
         # This would be so nice with a switch case (match)
         if status is GameStatus.TITLE_SCREEN:
-            pass
+            if active_menu is None:
+                active_menu = menus[status]
+                active_menu_offset = menu_offsets[status]
+
+            if active_overlay is None:
+                active_overlay = overlays[status]
 
         elif status is GameStatus.BATTLE_START:
             if enemy is None:
-                enemy = choice(list(enemies.values()))
+                enemy = choice(tuple(enemies.values()))
+
+            active_overlay = [overlays]
 
         elif status is GameStatus.EXIT:
             playing = False
 
         # -- Put the stuff
         if active_overlay is not None:
-            screen.blit(active_overlay, (0, 0))
+            if isinstance(active_menu, tuple) or isinstance(active_menu, list):
+                screen.blits(
+                    tuple(
+                        [(overlay, (0, 0)) for overlay in active_overlay]
+                    ))
+            else:
+                screen.blit(active_overlay, (0, 0))
 
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
