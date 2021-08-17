@@ -383,17 +383,17 @@ def main():
         # This would be so nice with a switch case (match)
         if status is GameStatus.TITLE_SCREEN:
             if active_menu is None:
-                active_menu = menus[status]
-                active_menu_offset = menu_offsets[status]
+                active_menu = menus.get(status, None)
+                active_menu_offset = menu_offsets.get(status, None)
 
             if active_overlay is None:
-                active_overlay = overlays[status]
+                active_overlay = overlays.get(status, None)
 
         elif status is GameStatus.BATTLE_START:
             if enemy is None:
                 enemy = choice(tuple(enemies.values()))
 
-            active_overlay = [overlays]
+            active_overlay = overlays.get(status, None)
 
         elif status is GameStatus.EXIT:
             playing = False
