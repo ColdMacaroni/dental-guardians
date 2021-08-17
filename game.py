@@ -12,7 +12,6 @@ from random import choice
 from enum import Enum, auto
 from itertools import islice
 
-
 class GameStatus(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
@@ -78,7 +77,7 @@ class Menu:
         self.antialias = antialias
         self.text_color = text_color
         self.text_background = text_background
-        self.text_selected= text_selected
+        self.text_selected = text_selected
         self.text_offset = text_offset
         self.background_color = background_color
         self.background_image = background_image
@@ -272,6 +271,57 @@ def load_enemies(enemy_folder, hp=40):
     return enemies
 
 
+def generate_overlays():
+    """
+    Generates all the overlays used in the program
+    :return: Dict of GameStatus: Pygame surface
+    """
+    overlays = dict()
+    overlays[GameStatus.TITLE_SCREEN] = generate_title(
+        "Dental Guardian",
+        pygame.font.SysFont("Arial", 64),
+        image=pygame.image.load(
+            os.path.join("images", "titlescreen.png")
+        ),
+        background_color=colors.RGB.WHITE)
+
+    return overlays
+
+
+def generate_menus():
+    """
+    Generates all the menus used
+    :return: dict of Game status: menu obj
+    """
+    menus = dict()
+    menus[GameStatus.TITLE_SCREEN] = Menu(
+        {
+            "Start": GameStatus.BATTLE_START,
+            "Credits": GameStatus.CREDITS,
+            "Exit": GameStatus.EXIT
+        },
+        (200, 140),
+        pygame.font.SysFont("Arial", 34),
+        padding=5,
+        background_color=colors.MENU_BACKGROUND,
+        text_selected=colors.MENU_HIGHLIGHTED)
+
+    return menus
+
+
+def generate_menu_offsets():
+    """
+    Generates a dict of the offsets used for blitting the menus into the screen
+    :return: A dict of string: (x, y)
+    """
+    width, height = screen_size()
+
+    offsets = dict()
+    offsets[GameStatus.TITLE_SCREEN] = (30, height - (height // 3))
+
+    return offsets
+
+
 # --
 
 
@@ -289,9 +339,9 @@ def main():
     screen = pygame.display.set_mode(size, vsync=1, flags=pygame.SRCALPHA)
     pygame.display.set_caption("Dental Guardians")
 
-    active_menu = None
-    active_menu_offset = None
-    active_overlay = None
+    menus = generate_menus()
+    menu_offsets = generate_menu_offsets()
+    overlays = generate_overlays()
 
     enemies = load_enemies(os.path.join("images", "enemies"))
     enemy = None
@@ -302,6 +352,12 @@ def main():
 
     playing = True
     while playing:
+        # Set the actives to the current status, before events so that
+        # keys can affect active menu
+        active_menu = menus[status]
+        active_menu_offset = menu_offsets[status]
+        active_overlay = overlays[status]
+
         for event in pygame.event.get():
             # Mark current loop as last
             if event.type == pygame.QUIT:
@@ -326,53 +382,23 @@ def main():
 
         screen.fill(colors.RGB.WHITE)
 
-        # This would be so nice with a switch case (or match)
+        # This would be so nice with a switch case (match)
         if status is GameStatus.TITLE_SCREEN:
-            if active_overlay is None:
-                active_menu = title_menu
-                active_menu_offset = (30, height - (height // 3))
-
-            if active_menu is None:
-                title_menu = Menu({"Start": GameStatus.BATTLE_START,
-                                   "Credits": GameStatus.CREDITS,
-                                   "Exit": GameStatus.EXIT},
-                                  (200, 140),
-                                  pygame.font.SysFont("Arial", 34),
-                                  padding=5,
-                                  background_color=colors.MENU_BACKGROUND,
-                                  text_selected=colors.MENU_HIGHLIGHTED)
-
-                active_overlay = generate_title("Dental Guardian",
-                                                pygame.font.SysFont("Arial", 64),
-                                                image=pygame.image.load(
-                                                  os.path.join("images", "titlescreen.png")
-                                                ),
-                                                background_color=colors.RGB.WHITE)
-
+            pass
 
         elif status is GameStatus.BATTLE_START:
             if enemy is None:
                 enemy = choice(list(enemies.values()))
-
-            if active_overlay is None:
-                pass
 
         elif status is GameStatus.EXIT:
             playing = False
 
         # -- Put the stuff
         if active_overlay is not None:
-            if isinstance(active_overlay, list):
-                # TODO: Figure out how to use blits
-                for overlay in active_overlay:
-                    screen.blit(overlay, (0, 0))
-
-            else:
-                screen.blit(active_overlay, (0, 0))
+            screen.blit(active_overlay, (0, 0))
 
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
-
 
         # Update display
         pygame.display.flip()
