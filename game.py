@@ -12,6 +12,7 @@ from random import choice
 from enum import Enum, auto
 from itertools import islice
 
+
 class GameStatus(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
@@ -42,6 +43,7 @@ class Menu:
     """
     This class lets you create an interactive menu that can be "blited" into a surface
     """
+
     def __init__(self, options, size, font: pygame.font.Font,
                  antialias=True,
                  text_offset=0,
@@ -164,14 +166,16 @@ class Menu:
 
 
 class Enemy:
-    def __init__(self, name, hp, weakness=None):
+    def __init__(self, name, hp, size, weakness=None):
         """
         :param name: The name of the enemy
         :param hp: Int. Health points
+        :param size: (x, y) tuple
         :param weakness: WeaponTypes attribute
         """
         self.name = name
         self.hp = self.max_hp = hp
+        self.size = size
         self.weakness = weakness
 
         self.sprites = {"idle": None,
@@ -194,10 +198,34 @@ class Enemy:
 
                 # I like how images look with the black color key
                 tmp.set_colorkey(colors.RGB.BLACK)
-                self.sprites[sprite] = tmp
+
+                # noinspection PyTypeChecker
+                self.sprites[sprite] = pygame.transform.scale(tmp, self.size)
 
             except FileNotFoundError:
                 print(f"{sprite}.png does not exist for {self.name}")
+
+    def get_surface(self, status):
+        """
+        Returns enemy sprite relevant to the status given
+        :param status: GameStatus attribute
+        :return: Pygame surface
+        """
+        # Set which sprite to use
+        status_sprite = {
+            GameStatus.BATTLE_START: "idle"
+        }
+
+        surface = pygame.surface.Surface(self.size, flags=pygame.SRCALPHA)
+        surface.fill(colors.RGBA.TRANSPARENT)
+
+        sprite = self.sprites[status_sprite[status]]
+
+        if sprite is not None:
+            # noinspection PyTypeChecker
+            surface.blit(sprite, (0, 0))
+
+        return surface
 
 
 def screen_size():
@@ -264,7 +292,8 @@ def load_enemies(enemy_folder, hp=40):
     enemy_folders = [folder for folder in os.listdir(enemy_folder) if os.path.isdir(os.path.join(enemy_folder, folder))]
     enemies = dict()
     for enemy in enemy_folders:
-        enemies[enemy] = Enemy(enemy, hp)
+        # Tuple is sprite size
+        enemies[enemy] = Enemy(enemy, hp, (256, 256))
 
         enemies[enemy].load_sprites(os.path.join(enemy_folder, enemy))
 
@@ -284,6 +313,15 @@ def generate_overlays():
             os.path.join("images", "titlescreen.png")
         ),
         background_color=colors.RGB.WHITE)
+
+    # TODO: Add a background to list
+    # This is a list so that multiple stuff can be added
+    overlays[GameStatus.BATTLE_START] = [None]
+
+    # For checking that the layout fits the sample
+    # overlays[GameStatus.BATTLE_START] = [
+    #  pygame.image.load(os.path.join("images", "example_layout.png")).convert()
+    # ]
 
     return overlays
 
@@ -354,8 +392,7 @@ def main():
 
     playing = True
     while playing:
-        # Set the actives to the current status, before events so that
-        # keys can affect active menu
+        # -- Event loop
         for event in pygame.event.get():
             # Mark current loop as last
             if event.type == pygame.QUIT:
@@ -377,39 +414,66 @@ def main():
                         # Reset active overlay and menu
                         active_menu = None
                         active_overlay = None
+        # --
 
+        # Set the actives to the current status
+        if active_menu is None:
+            active_menu = menus.get(status, None)
+            active_menu_offset = menu_offsets.get(status, None)
+
+        if active_overlay is None:
+            active_overlay = overlays.get(status, None)
+
+        # Reset screen
         screen.fill(colors.RGB.WHITE)
 
         # This would be so nice with a switch case (match)
+        # - Title screen
         if status is GameStatus.TITLE_SCREEN:
-            if active_menu is None:
-                active_menu = menus.get(status, None)
-                active_menu_offset = menu_offsets.get(status, None)
+            # Nothing to do here that is not handled by overlay and menu
+            pass
 
-            if active_overlay is None:
-                active_overlay = overlays.get(status, None)
-
+        # Start battle
         elif status is GameStatus.BATTLE_START:
+            # Pick enemy
             if enemy is None:
                 enemy = choice(tuple(enemies.values()))
 
-            active_overlay = overlays.get(status, None)
+            assert isinstance(active_overlay, list),\
+                f"Active overlay is {type(active_overlay)} " \
+                f"instead of list during {status}"
+
+            # Store so that it doesn't have to be called twice
+            enemy_surface = enemy.get_surface(status)
+
+            offset = (width // 15, height // 25)
+
+            # Try to replace so that positioning stays the same
+            try:
+                active_overlay[1] = (enemy_surface, offset)
+            except IndexError:
+                active_overlay.append((enemy_surface, offset))
 
         elif status is GameStatus.EXIT:
             playing = False
 
         # -- Put the stuff
         if active_overlay is not None:
-            if isinstance(active_menu, tuple) or isinstance(active_menu, list):
+            if isinstance(active_overlay, list):
                 screen.blits(
                     tuple(
-                        [(overlay, (0, 0)) for overlay in active_overlay]
+                        # Create a tuple of overlays and offsets,
+                        # the offset will be 0,0 if not set
+                        [(overlay, (0, 0)) if not isinstance(overlay, tuple) else overlay
+                         for overlay in active_overlay
+                         if overlay is not None]
                     ))
             else:
                 screen.blit(active_overlay, (0, 0))
 
         if active_menu is not None:
             screen.blit(active_menu.get_surface(), active_menu_offset)
+        # --
 
         # Update display
         pygame.display.flip()
