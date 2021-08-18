@@ -219,7 +219,10 @@ class Enemy:
         surface = pygame.surface.Surface(self.size, flags=pygame.SRCALPHA)
         surface.fill(colors.RGBA.TRANSPARENT)
 
-        sprite = self.sprites[status_sprite[status]]
+        # Get either the sprite for the given status or the first item as a fallback
+        sprite = self.sprites[
+            status_sprite.get(status,
+                              tuple(self.sprites.keys())[0])]
 
         if sprite is not None:
             # noinspection PyTypeChecker
@@ -289,7 +292,11 @@ def load_enemies(enemy_folder, hp=40):
     :param hp: HP points for each enemy to have
     :return: A dict of Enemy objects
     """
-    enemy_folders = [folder for folder in os.listdir(enemy_folder) if os.path.isdir(os.path.join(enemy_folder, folder))]
+    # Get list of folders, actually checking if they are folders
+    enemy_folders = [folder
+                     for folder in os.listdir(enemy_folder)
+                     if os.path.isdir(os.path.join(enemy_folder, folder))]
+
     enemies = dict()
     for enemy in enemy_folders:
         # Tuple is sprite size
@@ -319,9 +326,9 @@ def generate_overlays():
     overlays[GameStatus.BATTLE_START] = [None]
 
     # For checking that the layout fits the sample
-    # overlays[GameStatus.BATTLE_START] = [
-    #  pygame.image.load(os.path.join("images", "example_layout.png")).convert()
-    # ]
+    overlays[GameStatus.BATTLE_START] = [
+     pygame.image.load(os.path.join("images", "example_layout.png")).convert()
+    ]
 
     return overlays
 
