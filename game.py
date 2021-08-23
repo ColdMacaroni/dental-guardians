@@ -3,6 +3,8 @@
 # A game for teaching kids about dental hygiene
 
 # Local library imports
+from typing import Any
+
 import colors
 import fonts
 
@@ -45,7 +47,7 @@ class Menu:
     This class lets you create an interactive menu that can be "blited" into a surface
     """
 
-    def __init__(self, options, size, font: pygame.font.Font,
+    def __init__(self, options: dict[str, Any], size: tuple[int, int], font: pygame.font.Font,
                  antialias=True,
                  text_offset=0,
                  text_color=colors.RGB.BLACK,
@@ -99,7 +101,7 @@ class Menu:
         # Start at first option
         self.current_option = 0
 
-    def update_option(self, diff):
+    def update_option(self, diff: int):
         """
         Changes the current option
         :param diff: Value to be added to the current option
@@ -115,7 +117,7 @@ class Menu:
         elif self.current_option < 0:
             self.current_option = num_options - 1
 
-    def get_option(self, option=None):
+    def get_option(self, option=None) -> Any:
         """
         Returns the value of the currently selected options
         :param option: Optional override to self.current_option
@@ -135,7 +137,7 @@ class Menu:
         # Use next(it, None) to suppress that exception.
         return self.options[next(it)]
 
-    def get_surface(self):
+    def get_surface(self) -> pygame.surface.Surface:
         """
         Returns a pygame surface containing the menu to be blited into another surface
         :return: Pygame Surface
@@ -184,7 +186,7 @@ class Enemy:
                         "attack": None,
                         "defeated": None}
 
-    def load_sprites(self, folder: str):
+    def load_sprites(self, folder: str) -> None:
         """
         Load the sprites into this thing!
         :param folder: A Folder containing idle.png
@@ -206,7 +208,7 @@ class Enemy:
             except FileNotFoundError:
                 print(f"{sprite}.png does not exist for {self.name}")
 
-    def get_sprite(self, status: GameStatus):
+    def get_sprite(self, status: GameStatus) -> pygame.surface.Surface:
         """
         Returns enemy sprite relevant to the status given
         :param status: GameStatus attribute
@@ -235,7 +237,7 @@ class Enemy:
                       padding=10,
                       bg_color=colors.RGB.YELLOW,
                       text_color=colors.RGB.BLACK,
-                      bar_color=colors.RGB.GREEN):
+                      bar_color=colors.RGB.GREEN) -> pygame.surface.Surface:
         """
         Creates a blittable healthbar, very cool
         :param size: (x, y) tuple
@@ -256,7 +258,7 @@ class Enemy:
         return surface
 
 
-def screen_size():
+def screen_size() -> tuple[int, int]:
     """
     This function will return the width and height for the pygame screen
     It is a function so that the values are constant and accessible from
@@ -269,11 +271,13 @@ def screen_size():
 
 
 # -- Game
-def generate_title(title, image=None, text_color=colors.RGB.BLACK, background_color=None):
+def generate_title(title: str,
+                   image=None,
+                   text_color=colors.RGB.BLACK, background_color=None) -> pygame.surface.Surface:
     """
     Creates a title screen!
-    :param image: blitable background
     :param title: String
+    :param image: blitable background
 
     :param text_color: Title font color
     :param background_color: Bg color
@@ -309,7 +313,7 @@ def generate_title(title, image=None, text_color=colors.RGB.BLACK, background_co
     return title_screen
 
 
-def load_enemies(enemy_folder, hp=40):
+def load_enemies(enemy_folder: str, hp=40) -> dict:
     """
     Loads enemies from the enemy folder, using the folder names as enemy names
     :param enemy_folder: A string to a folder containing folders
@@ -331,7 +335,7 @@ def load_enemies(enemy_folder, hp=40):
     return enemies
 
 
-def generate_overlays():
+def generate_overlays() -> dict:
     """
     Generates all the overlays used in the program
     :return: Dict of GameStatus: Pygame surface
@@ -356,7 +360,7 @@ def generate_overlays():
     return overlays
 
 
-def generate_menus():
+def generate_menus() -> dict[GameStatus, Menu]:
     """
     Generates all the menus used
     :return: dict of Game status: menu obj
@@ -377,7 +381,7 @@ def generate_menus():
     return menus
 
 
-def generate_menu_offsets():
+def generate_menu_offsets() -> dict[GameStatus, tuple[int, int]]:
     """
     Generates a dict of the offsets used for blitting the menus into the screen
     :return: A dict of string: (x, y)
