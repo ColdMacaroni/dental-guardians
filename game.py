@@ -4,6 +4,7 @@
 
 # Local library imports
 import colors
+import fonts
 
 # Global library imports
 import pygame
@@ -244,12 +245,11 @@ def screen_size():
 
 
 # -- Game
-def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK, background_color=None):
+def generate_title(title, image=None, text_color=colors.RGB.BLACK, background_color=None):
     """
     Creates a title screen!
     :param image: blitable background
     :param title: String
-    :param title_font: pygame font
 
     :param text_color: Title font color
     :param background_color: Bg color
@@ -280,7 +280,7 @@ def generate_title(title, title_font, image=None, text_color=colors.RGB.BLACK, b
 
         title_screen.blit(resized_img, (0, 0))
 
-    title_screen.blit(title_font.render(title, True, text_color, background_color), (30, size[1] // 2))
+    title_screen.blit(fonts.TITLE.render(title, True, text_color, background_color), (30, size[1] // 2))
 
     return title_screen
 
@@ -315,7 +315,6 @@ def generate_overlays():
     overlays = dict()
     overlays[GameStatus.TITLE_SCREEN] = generate_title(
         "Dental Guardian",
-        pygame.font.SysFont("Arial", 64),
         image=pygame.image.load(
             os.path.join("images", "titlescreen.png")
         ),
@@ -345,8 +344,8 @@ def generate_menus():
             "Credits": GameStatus.CREDITS,
             "Exit": GameStatus.EXIT
         },
-        (200, 140),
-        pygame.font.SysFont("Arial", 34),
+        (200, 128),
+        fonts.BIG_MENU,
         padding=5,
         background_color=colors.MENU_BACKGROUND,
         text_selected=colors.MENU_HIGHLIGHTED)
@@ -367,7 +366,13 @@ def generate_menu_offsets():
     return offsets
 
 
+def generate_healthbar(enemy, width,
+                       bg_color=colors.RGB.WHITE,
+                       font_color=colors.RGB.BLACK,
+                       bar_color=colors.RGB.GREEN):
+    pass
 # --
+# 20x10 padding for battle menus
 
 
 def main():
