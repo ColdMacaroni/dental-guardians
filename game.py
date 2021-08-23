@@ -167,7 +167,7 @@ class Menu:
 
 
 class Enemy:
-    def __init__(self, name, hp, size, weakness=None):
+    def __init__(self, name: str, hp: int, size: tuple[int, int], weakness=None):
         """
         :param name: The name of the enemy
         :param hp: Int. Health points
@@ -184,7 +184,7 @@ class Enemy:
                         "attack": None,
                         "defeated": None}
 
-    def load_sprites(self, folder):
+    def load_sprites(self, folder: str):
         """
         Load the sprites into this thing!
         :param folder: A Folder containing idle.png
@@ -206,7 +206,7 @@ class Enemy:
             except FileNotFoundError:
                 print(f"{sprite}.png does not exist for {self.name}")
 
-    def get_surface(self, status):
+    def get_sprite(self, status: GameStatus):
         """
         Returns enemy sprite relevant to the status given
         :param status: GameStatus attribute
@@ -228,6 +228,30 @@ class Enemy:
         if sprite is not None:
             # noinspection PyTypeChecker
             surface.blit(sprite, (0, 0))
+
+        return surface
+
+    def get_healthbar(self, size: tuple[int, int],
+                      padding=10,
+                      bg_color=colors.RGB.YELLOW,
+                      text_color=colors.RGB.BLACK,
+                      bar_color=colors.RGB.GREEN):
+        """
+        Creates a blittable healthbar, very cool
+        :param size: (x, y) tuple
+
+        :param padding: distance in px from each side
+        :param bg_color: Pygame Color
+        :param text_color: Pygame Color
+        :param bar_color: Pygame Color
+        :return: Pygame surface
+        """
+        # No alpha, shouldn't be necessary
+        surface = pygame.surface.Surface(size)
+
+        surface.fill(bg_color)
+
+        surface.blit(fonts.HEALTHBAR.render(self.name.capitalize(), True, text_color), (padding, padding))
 
         return surface
 
@@ -366,11 +390,6 @@ def generate_menu_offsets():
     return offsets
 
 
-def generate_healthbar(enemy, width,
-                       bg_color=colors.RGB.WHITE,
-                       font_color=colors.RGB.BLACK,
-                       bar_color=colors.RGB.GREEN):
-    pass
 # --
 # 20x10 padding for battle menus
 
@@ -447,24 +466,31 @@ def main():
 
         # Start battle
         elif status is GameStatus.BATTLE_START:
+            assert isinstance(active_overlay, list), \
+                f"Active overlay is {type(active_overlay)} " \
+                f"instead of list during {status}"
+
             # Pick enemy
             if enemy is None:
                 enemy = choice(tuple(enemies.values()))
 
-            assert isinstance(active_overlay, list),\
-                f"Active overlay is {type(active_overlay)} " \
-                f"instead of list during {status}"
-
             # Store so that it doesn't have to be called twice
-            enemy_surface = enemy.get_surface(status)
+            enemy_surface = enemy.get_sprite(status)
+            enemy_offset = (width // 15, height // 25)
 
-            offset = (width // 15, height // 25)
+            healthbar_surface = enemy.get_healthbar((width // 2, height // 4.8))
+            healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
 
             # Try to replace so that positioning stays the same
-            try:
-                active_overlay[1] = (enemy_surface, offset)
-            except IndexError:
-                active_overlay.append((enemy_surface, offset))
+            if len(active_overlay) > 1:
+                active_overlay[1] = (enemy_surface, enemy_offset)
+            else:
+                active_overlay.append((enemy_surface, enemy_offset))
+
+            if len(active_overlay) > 2:
+                active_overlay[2] = (healthbar_surface, healthbar_offset)
+            else:
+                active_overlay.append((healthbar_surface, healthbar_offset))
 
         elif status is GameStatus.EXIT:
             playing = False
