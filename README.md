@@ -1,5 +1,6 @@
 # Dental Guardians
 A game made in pygame for teaching kids about keep your teeth healthy!
+RPG like!
 
 # Requirements
 For a detailed list, check `requirements.txt`  
