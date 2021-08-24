@@ -156,10 +156,13 @@ class Menu:
         vertical_offset = self.padding[0]
 
         for idx, option in enumerate(self.options.keys()):
+            # Display a different highlight if this option's the current one
+            text_bg = self.text_background
+
             if idx == self.current_option:
-                text = self.font.render(option, self.antialias, self.text_color, self.text_selected)
-            else:
-                text = self.font.render(option, self.antialias, self.text_color, self.text_background)
+                text_bg = self.text_selected
+
+            text = self.font.render(option, self.antialias, self.text_color, text_bg)
             surface.blit(text, (horizontal_offset, vertical_offset))
 
             # get_linesize() should return recommended line size, this way text won't overlap
@@ -253,7 +256,12 @@ class Enemy:
 
         surface.fill(bg_color)
 
-        surface.blit(fonts.HEALTHBAR.render(self.name.capitalize(), True, text_color), (padding, padding))
+        surface.blit(
+                fonts.HEALTHBAR.render(
+                    self.name.capitalize(),
+                    True,
+                    text_color),
+                (padding, padding))
 
         return surface
 
@@ -302,13 +310,21 @@ def generate_title(title: str,
         new_img_size[smallest] = size[smallest]
 
         # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
-        new_img_size[not smallest] = round((new_img_size[smallest] / img_size[smallest]) * img_size[not smallest])
+        new_img_size[not smallest] = round(
+                (new_img_size[smallest] / img_size[smallest])
+                * img_size[not smallest])
 
         resized_img = pygame.transform.scale(image, new_img_size)
 
         title_screen.blit(resized_img, (0, 0))
 
-    title_screen.blit(fonts.TITLE.render(title, True, text_color, background_color), (30, size[1] // 2))
+    title_screen.blit(
+            fonts.TITLE.render(
+                title,
+                True,
+                text_color,
+                background_color),
+            (30, size[1] // 2))
 
     return title_screen
 
@@ -521,7 +537,7 @@ def main():
         pygame.display.flip()
 
         # print(clock.get_fps())
-        clock.tick(60)  # fps
+        clock.tick(60)
 
     # Clean up and say bye
     pygame.font.quit()
