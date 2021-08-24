@@ -463,7 +463,7 @@ def main():
         screen.fill(colors.RGB.WHITE)
 
         # This would be so nice with a switch case (match)
-        # - Title screen
+        # -- Game statuses
         if status is GameStatus.TITLE_SCREEN:
             # Nothing to do here that is not handled by overlay and menu
             pass
