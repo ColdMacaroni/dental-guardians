@@ -13,7 +13,6 @@ import pygame
 import os
 from random import choice
 from enum import Enum, auto
-from itertools import islice
 
 
 class GameStatus(Enum):
@@ -125,17 +124,7 @@ class Menu:
         """
         opt = self.current_option if option is None else option
 
-        # The following code has been adapted from https://stackoverflow.com/a/59740280
-        # Changed variable names and used the result of the second next as key for dict
-        it = iter(self.options)
-
-        # Consume n elements.
-        next(islice(it, opt, opt), None)
-
-        # Return the value at the current position.
-        # This raises StopIteration if n is beyond the limits.
-        # Use next(it, None) to suppress that exception.
-        return self.options[next(it)]
+        return tuple(self.options.values())[opt]
 
     def get_surface(self) -> pygame.surface.Surface:
         """
