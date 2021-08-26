@@ -11,7 +11,7 @@ import os
 import pygame
 from enum import Enum, auto
 from random import choice
-from typing import Any
+from typing import Any, Union
 
 
 class GameStatus(Enum):
@@ -216,11 +216,12 @@ class TextBox:
         :param text: Take a guess
         :param size: Size in px for the box
         :param font: Pygame font
-        :param padding: Pixels to not be touched, int or clockwise tuple.
-        :type padding: list, tuple, int
+
+        :param padding: Pixels to not be touched
         :param fg: Text color
         :param bg: Box bg colour
         :param line_thickness: Border around the text box,
+        :param line_color: Color of border, set to None to not have one
         """
         self.text = text
         self.size = size
@@ -228,21 +229,13 @@ class TextBox:
 
         self.fg = fg
         self.bg = bg
+        self.line_thickness = line_thickness
+        self.line_color = line_color
 
-        # Convert padding to tuple
-        if isinstance(padding, int):
-            self.padding = (padding, padding, padding, padding)
+        self.padding = padding + line_thickness
 
-        elif len(padding) == 4 and all(
-            map(lambda x: isinstance(x, int), padding)
-        ):
-            self.padding = tuple(padding)
-
-        else:
-            raise TypeError(
-                "padding must be an int or object with 4 ints, "
-                f"not f{type(padding)}"
-            )
+    def set_text(self, new_text: str):
+        self.text = new_text
 
     def get_surface(self) -> pygame.surface.Surface:
         """
@@ -254,10 +247,13 @@ class TextBox:
 
         surface.blit(
             self.font.render(self.text, True, self.fg),
-            (self.padding[-1], self.padding[0]),
+            (self.padding, self.padding),
         )
 
-        return surface
+        if self.line_color is not None:
+            return draw_border(surface, self.line_thickness, self.line_color)
+        else:
+            return surface
 
 
 class Enemy:
@@ -494,17 +490,20 @@ def generate_menus() -> dict[GameStatus, Menu]:
     return menus
 
 
-def generate_menu_offsets() -> dict[GameStatus, tuple[int, int]]:
+def generate_offsets() -> dict[str, dict[GameStatus, tuple[int, int]]]:
     """
     Generates a dict of the offsets used for blitting the menus into the screen
     :return: A dict of string: (x, y)
     """
     width, height = screen_size()
 
-    offsets = dict()
-    offsets[GameStatus.TITLE_SCREEN] = (30, height - (height // 3))
+    menu_offsets = dict()
+    menu_offsets[GameStatus.TITLE_SCREEN] = (30, height - (height // 3))
 
-    return offsets
+    text_offsets = dict()
+    text_offsets[GameStatus.BATTLE_START] = (width*2//5, height//3)
+
+    return {"menu": menu_offsets, "text": text_offsets}
 
 
 # --
@@ -526,7 +525,7 @@ def main():
     pygame.display.set_caption("Dental Guardians")
 
     menus = generate_menus()
-    menu_offsets = generate_menu_offsets()
+    offsets = generate_offsets()
     overlays = generate_overlays()
 
     active_menu = None
@@ -567,7 +566,7 @@ def main():
         # Set the actives to the current status
         if active_menu is None:
             active_menu = menus.get(status, None)
-            active_menu_offset = menu_offsets.get(status, None)
+            active_menu_offset = offsets["menu"].get(status, None)
 
         if active_overlay is None:
             active_overlay = overlays.get(status, None)
@@ -607,7 +606,7 @@ def main():
                 fonts.DEFAULT,
                 bg=colors.RGB.LIGHT_BLUE,
             )
-            text_surface = draw_border(text.get_surface())
+            text_surface = text.get_surface()
             text_offset = (
                 width - text_surface.get_width() - 20,
                 height - text_surface.get_height() - 10,
