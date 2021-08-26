@@ -2,17 +2,16 @@
 # game.py
 # A game for teaching kids about dental hygiene
 
-# Local library imports
-from typing import Any
-
+# Local imports
 import colors
 import fonts
 
-# Global library imports
-import pygame
+# Global imports
 import os
-from random import choice
+import pygame
 from enum import Enum, auto
+from random import choice
+from typing import Any
 
 
 class GameStatus(Enum):
@@ -294,7 +293,7 @@ def generate_title(
     """
     Creates a title screen!
     :param title: String
-    :param image: blitable background
+    :param image: blittable background
 
     :param text_color: Title font color
     :param background_color: Bg color
