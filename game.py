@@ -42,6 +42,29 @@ class WeaponTypes(Enum):
     # = auto()
 
 
+def draw_border(
+    surface: pygame.surface.Surface, thickness=5, color=colors.RGB.BLACK
+) -> pygame.surface.Surface:
+    """
+    Draw a border around surface
+    :param surface: Pygame surface
+    :param thickness: Thickness of the line
+    :param color: Color of the line
+    :return: Same surface with border
+    """
+    width, height = surface.get_size()
+
+    # Draw borders clockwise
+    pygame.draw.rect(surface, color, ((0, 0), (width, thickness)))
+    pygame.draw.rect(surface, color, ((width - thickness, 0), (width, height)))
+    pygame.draw.rect(
+        surface, color, ((0, height - thickness), (width, height))
+    )
+    pygame.draw.rect(surface, color, ((0, 0), (thickness, height)))
+
+    return surface
+
+
 class Menu:
     """
     This class lets you create an interactive menu that can be "blited" into a
@@ -186,6 +209,8 @@ class TextBox:
         padding=5,
         fg=colors.RGB.BLACK,
         bg=colors.RGB.WHITE,
+        line_thickness=5,
+        line_color=colors.RGB.BLACK,
     ):
         """
         :param text: Take a guess
@@ -195,6 +220,7 @@ class TextBox:
         :type padding: list, tuple, int
         :param fg: Text color
         :param bg: Box bg colour
+        :param line_thickness: Border around the text box,
         """
         self.text = text
         self.size = size
@@ -226,7 +252,10 @@ class TextBox:
         surface = pygame.surface.Surface(self.size, flags=pygame.SRCALPHA)
         surface.fill(self.bg)
 
-        surface.blit(self.font.render(self.text, True, self.fg), (self.padding[-1], self.padding[0]))
+        surface.blit(
+            self.font.render(self.text, True, self.fg),
+            (self.padding[-1], self.padding[0]),
+        )
 
         return surface
 
@@ -572,9 +601,17 @@ def main():
             )
             healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
 
-            text = TextBox("Hellooooo", (width*2 // 3, height // 3), fonts.DEFAULT, bg=colors.RGB.LIGHT_BLUE)
-            text_surface = text.get_surface()
-            text_offset = (width - text_surface.get_width() - 20, height - text_surface.get_height() - 10)
+            text = TextBox(
+                "Hellooooo",
+                (width * 2 // 3, height // 3),
+                fonts.DEFAULT,
+                bg=colors.RGB.LIGHT_BLUE,
+            )
+            text_surface = draw_border(text.get_surface())
+            text_offset = (
+                width - text_surface.get_width() - 20,
+                height - text_surface.get_height() - 10,
+            )
             # Try to replace so that positioning stays the same
             if len(active_overlay) > 1:
                 active_overlay[1] = (text_surface, text_offset)
