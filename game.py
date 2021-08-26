@@ -19,6 +19,7 @@ class GameStatus(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
+
     TITLE_SCREEN = auto()
     CREDITS = auto()
     EXIT = auto()
@@ -36,6 +37,7 @@ class WeaponTypes(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
+
     BRUSH = auto()
     FLOSS = auto()
     # = auto()
@@ -46,15 +48,20 @@ class Menu:
     This class lets you create an interactive menu that can be "blited" into a surface
     """
 
-    def __init__(self, options: dict[str, Any], size: tuple[int, int], font: pygame.font.Font,
-                 antialias=True,
-                 text_offset=0,
-                 text_color=colors.RGB.BLACK,
-                 text_background=None,
-                 text_selected=colors.RGB.YELLOW,
-                 background_color=colors.RGBA.TRANSPARENT,
-                 background_image=None,
-                 padding=0):
+    def __init__(
+        self,
+        options: dict[str, Any],
+        size: tuple[int, int],
+        font: pygame.font.Font,
+        antialias=True,
+        text_offset=0,
+        text_color=colors.RGB.BLACK,
+        text_background=None,
+        text_selected=colors.RGB.YELLOW,
+        background_color=colors.RGBA.TRANSPARENT,
+        background_image=None,
+        padding=0,
+    ):
         """
         :param background_image:
         :param options: A dict of strings and values to be returned
@@ -94,7 +101,9 @@ class Menu:
             self.padding = padding
 
         else:
-            raise Exception("Padding must be an int or tuple of length 4, not " + str(type(float)))
+            raise Exception(
+                "Padding must be an int or tuple of length 4, not " + str(type(float))
+            )
 
         # Defaults
         # Start at first option
@@ -173,10 +182,7 @@ class Enemy:
         self.size = size
         self.weakness = weakness
 
-        self.sprites = {"idle": None,
-                        "hurt": None,
-                        "attack": None,
-                        "defeated": None}
+        self.sprites = {"idle": None, "hurt": None, "attack": None, "defeated": None}
 
     def load_sprites(self, folder: str) -> None:
         """
@@ -207,17 +213,13 @@ class Enemy:
         :return: Pygame surface
         """
         # Set which sprite to use
-        status_sprite = {
-            GameStatus.BATTLE_START: "idle"
-        }
+        status_sprite = {GameStatus.BATTLE_START: "idle"}
 
         surface = pygame.surface.Surface(self.size, flags=pygame.SRCALPHA)
         surface.fill(colors.RGBA.TRANSPARENT)
 
         # Get either the sprite for the given status or the first item as a fallback
-        sprite = self.sprites[
-            status_sprite.get(status,
-                              tuple(self.sprites.keys())[0])]
+        sprite = self.sprites[status_sprite.get(status, tuple(self.sprites.keys())[0])]
 
         if sprite is not None:
             # noinspection PyTypeChecker
@@ -225,11 +227,14 @@ class Enemy:
 
         return surface
 
-    def get_healthbar(self, size: tuple[int, int],
-                      padding=10,
-                      bg_color=colors.RGB.YELLOW,
-                      text_color=colors.RGB.BLACK,
-                      bar_color=colors.RGB.GREEN) -> pygame.surface.Surface:
+    def get_healthbar(
+        self,
+        size: tuple[int, int],
+        padding=10,
+        bg_color=colors.RGB.YELLOW,
+        text_color=colors.RGB.BLACK,
+        bar_color=colors.RGB.GREEN,
+    ) -> pygame.surface.Surface:
         """
         Creates a blittable healthbar, very cool
         :param size: (x, y) tuple
@@ -246,11 +251,9 @@ class Enemy:
         surface.fill(bg_color)
 
         surface.blit(
-                fonts.HEALTHBAR.render(
-                    self.name.capitalize(),
-                    True,
-                    text_color),
-                (padding, padding))
+            fonts.HEALTHBAR.render(self.name.capitalize(), True, text_color),
+            (padding, padding),
+        )
 
         return surface
 
@@ -268,9 +271,9 @@ def screen_size() -> tuple[int, int]:
 
 
 # -- Game
-def generate_title(title: str,
-                   image=None,
-                   text_color=colors.RGB.BLACK, background_color=None) -> pygame.surface.Surface:
+def generate_title(
+    title: str, image=None, text_color=colors.RGB.BLACK, background_color=None
+) -> pygame.surface.Surface:
     """
     Creates a title screen!
     :param title: String
@@ -300,20 +303,17 @@ def generate_title(title: str,
 
         # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
         new_img_size[not smallest] = round(
-                (new_img_size[smallest] / img_size[smallest])
-                * img_size[not smallest])
+            (new_img_size[smallest] / img_size[smallest]) * img_size[not smallest]
+        )
 
         resized_img = pygame.transform.scale(image, new_img_size)
 
         title_screen.blit(resized_img, (0, 0))
 
     title_screen.blit(
-            fonts.TITLE.render(
-                title,
-                True,
-                text_color,
-                background_color),
-            (30, size[1] // 2))
+        fonts.TITLE.render(title, True, text_color, background_color),
+        (30, size[1] // 2),
+    )
 
     return title_screen
 
@@ -326,9 +326,11 @@ def load_enemies(enemy_folder: str, hp=40) -> dict:
     :return: A dict of Enemy objects
     """
     # Get list of folders, actually checking if they are folders
-    enemy_folders = [folder
-                     for folder in os.listdir(enemy_folder)
-                     if os.path.isdir(os.path.join(enemy_folder, folder))]
+    enemy_folders = [
+        folder
+        for folder in os.listdir(enemy_folder)
+        if os.path.isdir(os.path.join(enemy_folder, folder))
+    ]
 
     enemies = dict()
     for enemy in enemy_folders:
@@ -348,10 +350,9 @@ def generate_overlays() -> dict:
     overlays = dict()
     overlays[GameStatus.TITLE_SCREEN] = generate_title(
         "Dental Guardian",
-        image=pygame.image.load(
-            os.path.join("images", "titlescreen.png")
-        ),
-        background_color=colors.RGB.WHITE)
+        image=pygame.image.load(os.path.join("images", "titlescreen.png")),
+        background_color=colors.RGB.WHITE,
+    )
 
     # TODO: Add a background to list
     # This is a list so that multiple stuff can be added
@@ -359,7 +360,7 @@ def generate_overlays() -> dict:
 
     # For checking that the layout fits the sample
     overlays[GameStatus.BATTLE_START] = [
-     pygame.image.load(os.path.join("images", "example_layout.png")).convert()
+        pygame.image.load(os.path.join("images", "example_layout.png")).convert()
     ]
 
     return overlays
@@ -375,13 +376,14 @@ def generate_menus() -> dict[GameStatus, Menu]:
         {
             "Start": GameStatus.BATTLE_START,
             "Credits": GameStatus.CREDITS,
-            "Exit": GameStatus.EXIT
+            "Exit": GameStatus.EXIT,
         },
         (200, 128),
         fonts.BIG_MENU,
         padding=5,
         background_color=colors.MENU_BACKGROUND,
-        text_selected=colors.MENU_HIGHLIGHTED)
+        text_selected=colors.MENU_HIGHLIGHTED,
+    )
 
     return menus
 
@@ -475,9 +477,10 @@ def main():
 
         # Start battle
         elif status is GameStatus.BATTLE_START:
-            assert isinstance(active_overlay, list), \
-                f"Active overlay is {type(active_overlay)} " \
+            assert isinstance(active_overlay, list), (
+                f"Active overlay is {type(active_overlay)} "
                 f"instead of list during {status}"
+            )
 
             # Pick enemy
             if enemy is None:
@@ -511,10 +514,15 @@ def main():
                     tuple(
                         # Create a tuple of overlays and offsets,
                         # the offset will be 0,0 if not set
-                        [(overlay, (0, 0)) if not isinstance(overlay, tuple) else overlay
-                         for overlay in active_overlay
-                         if overlay is not None]
-                    ))
+                        [
+                            (overlay, (0, 0))
+                            if not isinstance(overlay, tuple)
+                            else overlay
+                            for overlay in active_overlay
+                            if overlay is not None
+                        ]
+                    )
+                )
             else:
                 screen.blit(active_overlay, (0, 0))
 
