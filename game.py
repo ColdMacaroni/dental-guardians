@@ -100,7 +100,7 @@ class Menu:
             self.padding = padding
 
         else:
-            raise Exception(
+            raise TypeError(
                 "Padding must be an int or tuple of length 4, "
                 f"not {type(padding)}"
             )
@@ -171,6 +171,52 @@ class Menu:
             vertical_offset += self.font.get_linesize() + self.text_offset
 
         return surface
+
+
+class TextBox:
+    """
+    General purpose text box
+    """
+
+    def __init__(
+        self,
+        text: str,
+        size: tuple[int, int],
+        font: pygame.font.Font,
+        padding=5,
+        fg=colors.RGB.BLACK,
+        bg=colors.RGB.WHITE,
+    ):
+        """
+        :param text: Take a guess
+        :param size: Size in px for the box
+        :param font: Pygame font
+        :param padding: Pixels to not be touched, int or clockwise tuple.
+        :type padding: list, tuple, int
+        :param fg: Text color
+        :param bg: Box bg colour
+        """
+        self.text = text
+        self.size = size
+        self.font = font
+
+        self.fg = fg
+        self.bg = bg
+
+        # Convert padding to tuple
+        if isinstance(padding, int):
+            self.padding = (padding, padding, padding, padding)
+
+        elif len(padding) == 4 and all(
+            map(lambda x: isinstance(x, int), padding)
+        ):
+            self.padding = tuple(padding)
+
+        else:
+            raise TypeError(
+                "padding must be an int or object with 4 ints, "
+                f"not f{type(padding)}"
+            )
 
 
 class Enemy:
