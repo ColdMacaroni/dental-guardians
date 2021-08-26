@@ -7,3 +7,4 @@ TITLE = SysFont("Arial", 64)
 BIG_MENU = SysFont("Arial", 34)
 
 HEALTHBAR = SysFont("Helvetica", 28)
+DEFAULT = SysFont("Arial", 24)
