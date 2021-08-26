@@ -320,8 +320,8 @@ def generate_title(
 
         # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
         new_img_size[not smallest] = round(
-            (new_img_size[smallest] / img_size[smallest]) *
-            img_size[not smallest]
+            (new_img_size[smallest] / img_size[smallest])
+            * img_size[not smallest]
         )
 
         resized_img = pygame.transform.scale(image, new_img_size)
