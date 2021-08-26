@@ -218,6 +218,18 @@ class TextBox:
                 f"not f{type(padding)}"
             )
 
+    def get_surface(self) -> pygame.surface.Surface:
+        """
+        Create a cool textbox!!!
+        :return: pygame surface
+        """
+        surface = pygame.surface.Surface(self.size, flags=pygame.SRCALPHA)
+        surface.fill(self.bg)
+
+        surface.blit(self.font.render(self.text, True, self.fg), (self.padding[-1], self.padding[0]))
+
+        return surface
+
 
 class Enemy:
     def __init__(
@@ -560,14 +572,22 @@ def main():
             )
             healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
 
+            text = TextBox("Hellooooo", (width*2 // 3, height // 3), fonts.DEFAULT, bg=colors.RGB.LIGHT_BLUE)
+            text_surface = text.get_surface()
+            text_offset = (width - text_surface.get_width() - 20, height - text_surface.get_height() - 10)
             # Try to replace so that positioning stays the same
             if len(active_overlay) > 1:
-                active_overlay[1] = (enemy_surface, enemy_offset)
+                active_overlay[1] = (text_surface, text_offset)
+            else:
+                active_overlay.append((text_surface, text_offset))
+
+            if len(active_overlay) > 2:
+                active_overlay[2] = (enemy_surface, enemy_offset)
             else:
                 active_overlay.append((enemy_surface, enemy_offset))
 
-            if len(active_overlay) > 2:
-                active_overlay[2] = (healthbar_surface, healthbar_offset)
+            if len(active_overlay) > 3:
+                active_overlay[3] = (healthbar_surface, healthbar_offset)
             else:
                 active_overlay.append((healthbar_surface, healthbar_offset))
 
