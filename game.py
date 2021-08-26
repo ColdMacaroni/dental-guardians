@@ -45,7 +45,8 @@ class WeaponTypes(Enum):
 
 class Menu:
     """
-    This class lets you create an interactive menu that can be "blited" into a surface
+    This class lets you create an interactive menu that can be "blited" into a
+    surface
     """
 
     def __init__(
@@ -75,9 +76,8 @@ class Menu:
         :keyword text_selected: The background color for the selected text
         :keyword background_color: Background color for the menu
         :keyword background_image: Image to be blited into the background
-        :keyword padding: In pixels, distance from each side of the surface that will not be touched.
-                          Can be either an int to signify the same padding on all sides or a tuple
-                          of length 4 if you want to be specific. Clockwise.
+        :keyword padding: In pixels, distance from each side of the surface
+        that will not be touched. Single int or clockwise tuple
         """
         # Parameters
         self.options = options
@@ -102,7 +102,8 @@ class Menu:
 
         else:
             raise Exception(
-                "Padding must be an int or tuple of length 4, not " + str(type(float))
+                "Padding must be an int or tuple of length 4, "
+                f"not {type(padding)}"
             )
 
         # Defaults
@@ -137,7 +138,8 @@ class Menu:
 
     def get_surface(self) -> pygame.surface.Surface:
         """
-        Returns a pygame surface containing the menu to be blited into another surface
+        Returns a pygame surface containing the menu to be blited into another
+        surface
         :return: Pygame Surface
         """
         # SRCALPHA needed to support RGBA colours. Slow.
@@ -160,17 +162,22 @@ class Menu:
             if idx == self.current_option:
                 text_bg = self.text_selected
 
-            text = self.font.render(option, self.antialias, self.text_color, text_bg)
+            text = self.font.render(
+                option, self.antialias, self.text_color, text_bg
+            )
             surface.blit(text, (horizontal_offset, vertical_offset))
 
-            # get_linesize() should return recommended line size, this way text won't overlap
+            # get_linesize() should return recommended line size, this way text
+            # won't overlap
             vertical_offset += self.font.get_linesize() + self.text_offset
 
         return surface
 
 
 class Enemy:
-    def __init__(self, name: str, hp: int, size: tuple[int, int], weakness=None):
+    def __init__(
+        self, name: str, hp: int, size: tuple[int, int], weakness=None
+    ):
         """
         :param name: The name of the enemy
         :param hp: Int. Health points
@@ -182,7 +189,12 @@ class Enemy:
         self.size = size
         self.weakness = weakness
 
-        self.sprites = {"idle": None, "hurt": None, "attack": None, "defeated": None}
+        self.sprites = {
+            "idle": None,
+            "hurt": None,
+            "attack": None,
+            "defeated": None,
+        }
 
     def load_sprites(self, folder: str) -> None:
         """
@@ -195,7 +207,9 @@ class Enemy:
         for sprite in self.sprites.keys():
             try:
                 # Convert returns a faster to draw image.
-                tmp = pygame.image.load(f"{os.path.join(folder, sprite)}.png").convert()
+                tmp = pygame.image.load(
+                    f"{os.path.join(folder, sprite)}.png"
+                ).convert()
 
                 # I like how images look with the black color key
                 tmp.set_colorkey(colors.RGB.BLACK)
@@ -218,8 +232,11 @@ class Enemy:
         surface = pygame.surface.Surface(self.size, flags=pygame.SRCALPHA)
         surface.fill(colors.RGBA.TRANSPARENT)
 
-        # Get either the sprite for the given status or the first item as a fallback
-        sprite = self.sprites[status_sprite.get(status, tuple(self.sprites.keys())[0])]
+        # Get either the sprite for the given status
+        # or the first item as a fallback
+        sprite = self.sprites[
+            status_sprite.get(status, tuple(self.sprites.keys())[0])
+        ]
 
         if sprite is not None:
             # noinspection PyTypeChecker
@@ -303,7 +320,8 @@ def generate_title(
 
         # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
         new_img_size[not smallest] = round(
-            (new_img_size[smallest] / img_size[smallest]) * img_size[not smallest]
+            (new_img_size[smallest] / img_size[smallest]) *
+            img_size[not smallest]
         )
 
         resized_img = pygame.transform.scale(image, new_img_size)
@@ -360,7 +378,9 @@ def generate_overlays() -> dict:
 
     # For checking that the layout fits the sample
     overlays[GameStatus.BATTLE_START] = [
-        pygame.image.load(os.path.join("images", "example_layout.png")).convert()
+        pygame.image.load(
+            os.path.join("images", "example_layout.png")
+        ).convert()
     ]
 
     return overlays
@@ -490,7 +510,9 @@ def main():
             enemy_surface = enemy.get_sprite(status)
             enemy_offset = (width // 15, height // 25)
 
-            healthbar_surface = enemy.get_healthbar((width // 2, height // 4.8))
+            healthbar_surface = enemy.get_healthbar(
+                (width // 2, height // 4.8)
+            )
             healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
 
             # Try to replace so that positioning stays the same
