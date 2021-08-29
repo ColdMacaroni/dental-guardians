@@ -107,13 +107,18 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     scenes = dict()
     display_size = display_width, display_height = screen_size()
 
-    battle_menu_size = (display_width//5, display_height//3)
-    battle_menu_pos = (display_width//30, display_height - display_height//3 * 1.25)
+    battle_menu_size = (display_width // 5, display_height // 3)
+    battle_menu_pos = (
+        display_width // 30,
+        display_height - display_height // 3 * 1.25,
+    )
 
     battle_textbox_size = (display_width // 2.4, display_height // 3)
-    battle_textbox_pos = ((display_width // 4),
-                          display_height - display_height//3 * 1.25)
-    healthbar_pos = (display_width//2 - display_width//25, 50)
+    battle_textbox_pos = (
+        (display_width // 4),
+        display_height - display_height // 3 * 1.25,
+    )
+    healthbar_pos = (display_width // 2 - display_width // 25, 50)
 
     # ----------------
 
@@ -134,24 +139,25 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 background_color=colors.MENU_BACKGROUND,
                 text_selected=colors.MENU_HIGHLIGHTED,
             ),
-            (display_width // 20, display_height * 2 // 3)
+            (display_width // 20, display_height * 2 // 3),
         ),
-        statics={"title_box":
-            Printable(
+        statics={
+            "title_box": Printable(
                 TextBox(
-                  "Dental Guardians",
-                  fonts.TITLE,
+                    "Dental Guardians",
+                    fonts.TITLE,
                 ),
-                (display_width // 20, display_height // 2)
+                (display_width // 20, display_height // 2),
             )
-        }
-
+        },
     )
 
     # ----------------
 
     scenes[GameStatus.BATTLE_START] = BattleScene(
-        bg=resize_to_cover(image.load(path.join("images", "example_layout.png")), display_size),
+        bg=resize_to_cover(
+            image.load(path.join("images", "example_layout.png")), display_size
+        ),
         menu=Printable(
             Menu(
                 {"Weapon": None, "Consumable": None},
@@ -160,21 +166,23 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 background_color=colors.RGB.WHITE,
                 padding=5,
                 text_selected=colors.RGB.LIGHT_BLUE,
-                line=True
-                ),
-            battle_menu_pos),
+                line=True,
+            ),
+            battle_menu_pos,
+        ),
         statics={
             "info_box": Printable(
-                TextBox("placeholder",
-                        fonts.DEFAULT,
-                        battle_textbox_size,
-                        line=True
-                        ),
-                battle_textbox_pos
+                TextBox(
+                    "placeholder",
+                    fonts.DEFAULT,
+                    battle_textbox_size,
+                    line=True,
+                ),
+                battle_textbox_pos,
             )
         },
         enemy=Printable(None, (display_width // 15, display_height // 25)),
-        healthbar=Printable(None, healthbar_pos)
+        healthbar=Printable(None, healthbar_pos),
     )
 
     return scenes

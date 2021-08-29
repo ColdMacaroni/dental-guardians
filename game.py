@@ -125,13 +125,17 @@ def main():
 
         # Start battle
         elif status is GameStatus.BATTLE_START:
-            assert isinstance(active_scene, scenes.BattleScene), f"{status} scene is {type(active_scene)} " \
-                                                                       f"not {type(scenes.BattleScene)}"
+            assert isinstance(active_scene, scenes.BattleScene), (
+                f"{status} scene is {type(active_scene)} "
+                f"not {type(scenes.BattleScene)}"
+            )
             # Pick enemy
             if active_scene.enemy.object is None:
                 active_scene.enemy.object = choice(tuple(enemies.values()))
 
-            active_scene.statics["info_box"].object.set_text(f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!")
+            active_scene.statics["info_box"].object.set_text(
+                f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!"
+            )
 
         elif status is GameStatus.EXIT:
             playing = False
@@ -153,7 +157,10 @@ def main():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
-                if active_scene is not None and active_scene.menu.object is not None:
+                if (
+                    active_scene is not None
+                    and active_scene.menu.object is not None
+                ):
                     active_menu = active_scene.menu.object
                     if event.key == pygame.K_UP:
                         active_menu.update_option(-1)
@@ -165,7 +172,9 @@ def main():
                     elif event.key == pygame.K_RETURN:
                         # Update status
                         new_option = active_menu.get_option()
-                        status = new_option if new_option is not None else status
+                        status = (
+                            new_option if new_option is not None else status
+                        )
         # --
 
     # Clean up and say bye

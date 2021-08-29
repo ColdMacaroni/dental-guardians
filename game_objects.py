@@ -268,8 +268,10 @@ class TextBox:
 
         else:
             # Get a tight fitting box.
-            size = (self.font.size(self.text)[0] + self.padding*2,
-                    self.font.get_height() + self.padding*2)
+            size = (
+                self.font.size(self.text)[0] + self.padding * 2,
+                self.font.get_height() + self.padding * 2,
+            )
 
         surface = Surface(size, flags=SRCALPHA)
         surface.fill(self.bg)
