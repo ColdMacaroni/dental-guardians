@@ -73,12 +73,9 @@ def main():
 
         # This would be so nice with a switch case (match)
         # -- Game statuses
-        if status is GameStatus.TITLE_SCREEN:
-            # Nothing to do here that is not handled by scene
-            pass
-
+        # - Nothing to do for TITLE_SCREEN
         # Start battle
-        elif status is GameStatus.BATTLE_START:
+        if status is GameStatus.BATTLE_START:
             assert isinstance(active_scene, scenes.BattleScene), (
                 f"{status} scene is {type(active_scene)} "
                 f"not {type(scenes.BattleScene)}"
@@ -90,7 +87,8 @@ def main():
             active_scene.statics["info_box"].object.set_text(
                 f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!"
             )
-            
+
+            # Go to next animation after a sec
             if not start_time:
                 start_time = time()
             else:
