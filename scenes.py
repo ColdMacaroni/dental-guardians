@@ -67,7 +67,7 @@ class BattleScene(Scene):
         # Update healthbar and draw.
         if self.enemy.object is not None:
             self.healthbar.object = self.enemy.object.get_healthbar()
-            surface.blit(self.healthbar.pos, self.healthbar.pos)
+            surface.blit(self.healthbar.object, self.healthbar.pos)
 
         return surface
 
