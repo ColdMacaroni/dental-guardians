@@ -17,6 +17,19 @@ from pygame.image import load as image_load
 from pygame.transform import scale as transform_scale
 
 
+# This one is at the top because it's very important.
+def screen_size() -> tuple[int, int]:
+    """
+    This function will return the width and height for the pygame screen
+    It is a function so that the values are constant and accessible from
+    every function.
+    I do not use global variables because they may be modified by accident,
+    python does not support constants.
+    :return: x, y tuple
+    """
+    return 800, 600
+
+
 class GameStatus(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
