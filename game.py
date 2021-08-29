@@ -12,6 +12,7 @@ import pygame
 from enum import Enum, auto
 from random import choice
 from typing import Any, Union
+from dataclasses import dataclass
 
 
 class GameStatus(Enum):
@@ -36,7 +37,6 @@ class WeaponTypes(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
-
     BRUSH = auto()
     FLOSS = auto()
     # = auto()
@@ -355,6 +355,19 @@ class Enemy:
         )
 
         return surface
+
+
+@dataclass
+class Printable:
+    object: Union[Menu, TextBox, Enemy]
+    pos: tuple[int, int]
+
+
+@dataclass
+class Scene:
+    bg: pygame.surface.Surface
+    menu: Printable
+    statics: list[Printable]
 
 
 def screen_size() -> tuple[int, int]:
