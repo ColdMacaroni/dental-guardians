@@ -98,6 +98,9 @@ class Menu:
         background_color=colors.RGBA.TRANSPARENT,
         background_image=None,
         padding=0,
+        line=False,
+        line_thickness=5,
+        line_color=colors.RGB.BLACK,
     ):
         """
         :param background_image:
@@ -114,6 +117,9 @@ class Menu:
         :keyword background_image: Image to be blited into the background
         :keyword padding: In pixels, distance from each side of the surface
         that will not be touched. Single int or clockwise tuple
+        :keyword line: Whether to display a line or not.
+        :keyword line_thickness: Thickness in px of line
+        :keyword line_color: Color of line
         """
         # Parameters
         self.options = options
@@ -126,21 +132,17 @@ class Menu:
         self.text_background = text_background
         self.text_selected = text_selected
         self.text_offset = text_offset
+
         self.background_color = background_color
         self.background_image = background_image
 
-        # Validate padding
-        if isinstance(padding, int):
-            self.padding = (padding, padding, padding, padding)
+        self.line = line
+        self.line_thickness = line_thickness
+        self.line_color = line_color
 
-        elif isinstance(padding, tuple) and len(padding) == 4:
-            self.padding = padding
-
-        else:
-            raise TypeError(
-                "Padding must be an int or tuple of length 4, "
-                f"not {type(padding)}"
-            )
+        self.padding = padding
+        if self.line:
+            self.padding += self.line_thickness
 
         # Defaults
         # Start at first option
@@ -162,15 +164,12 @@ class Menu:
         elif self.current_option < 0:
             self.current_option = num_options - 1
 
-    def get_option(self, option=None) -> Any:
+    def get_option(self) -> Any:
         """
         Returns the value of the currently selected options
-        :param option: Optional override to self.current_option
         :return: Any
         """
-        opt = self.current_option if option is None else option
-
-        return tuple(self.options.values())[opt]
+        return tuple(self.options.values())[self.current_option]
 
     def get_surface(self) -> Surface:
         """
@@ -187,9 +186,9 @@ class Menu:
 
         # Offsets arent tuples so that they can be reassigned
         # Padding from left
-        horizontal_offset = self.padding[-1]
+        horizontal_offset = self.padding
         # Padding from top
-        vertical_offset = self.padding[0]
+        vertical_offset = self.padding
 
         for idx, option in enumerate(self.options.keys()):
             # Display a different highlight if this option's the current one
@@ -207,7 +206,10 @@ class Menu:
             # won't overlap
             vertical_offset += self.font.get_linesize() + self.text_offset
 
-        return surface
+        if self.line:
+            return draw_border(surface, self.line_thickness, self.line_color)
+        else:
+            return surface
 
 
 class TextBox:
