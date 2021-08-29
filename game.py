@@ -127,7 +127,8 @@ def main():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
-                if (active_menu := all_scenes[status].menu.object) is not None:
+                if (active_scene := all_scenes.get(status, None)) is not None and active_scene.menu.object is not None:
+                    active_menu = active_scene.menu.object
                     if event.key == pygame.K_UP:
                         active_menu.update_option(-1)
 
@@ -151,18 +152,20 @@ def main():
 
         # Start battle
         elif status is GameStatus.BATTLE_START:
+            assert isinstance(all_scenes[status], scenes.BattleScene), f"{status} scene is {type(all_scenes[status])}" \
+                                                                       f"not {type(scenes.BattleScene)}"
             # Pick enemy
-            if enemy is None:
-                enemy = choice(tuple(enemies.values()))
+            if all_scenes[status].enemy.object is None:
+                all_scenes[status].enemy.object = choice(tuple(enemies.values()))
 
             # Store so that it doesn't have to be called twice
-            enemy_surface = enemy.get_sprite(status)
-            enemy_offset = (width // 15, height // 25)
+            #enemy_surface = enemy.get_sprite(status)
+            #enemy_offset = (width // 15, height // 25)
 
-            healthbar_surface = enemy.get_healthbar(
-                (width // 2, height // 4.8)
-            )
-            healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
+            #healthbar_surface = enemy.get_healthbar(
+            #    (width // 2, height // 4.8)
+            #)
+            #healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
 
             # text = TextBox(
             #     "Hellooooo",
@@ -215,7 +218,8 @@ def main():
         #
         # if active_menu is not None:
         #     screen.blit(active_menu.get_surface(), active_menu_offset)
-        screen.blit(all_scenes[status].get_surface(status), (0, 0))
+        if (active_scene := all_scenes.get(status, None)) is not None:
+            screen.blit(active_scene.get_surface(status), (0, 0))
         # --
 
         # Update display

@@ -60,7 +60,7 @@ class BattleScene(Scene):
         """
         surface = super().get_surface()
 
-        surface.blit(self.enemy.object, self.enemy.pos)
+        surface.blit(self.enemy.object.get_sprite(status), self.enemy.pos)
 
         # TODO: enemy method hp_changed. Only get healthbar if it has changed.
         #       Will reduce calls.
@@ -140,22 +140,28 @@ def generate_scenes() -> dict[GameStatus, Scene]:
 
     # ----------------
 
-    battle_start_box_size = (display_width * 2 // 3, display_height // 3)
+    battle_start_box_size = (display_width // 2, display_height // 3)
 
     scenes[GameStatus.BATTLE_START] = BattleScene(
         resize_to_cover(image.load(path.join("images", "example_layout.png")), display_size),
-        None,
+        Printable(None, (0, 0)),
         {
             "info_box": Printable(
                 TextBox("placeholder",
                         fonts.DEFAULT,
-                        battle_start_box_size
+                        battle_start_box_size,
+                        line=True
                         ),
                 (
-                    display_width - battle_start_box_size[0] - 20,
+                    (display_width // 4) - 10,
                     display_height - battle_start_box_size[1] - 10,
                 )
             )
-        }
+        },
+        Printable(None, (display_width // 15, display_height // 25)),
+        Printable(None, (display_width//2, 50))
     )
+
+    del battle_start_box_size
+
     return scenes
