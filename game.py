@@ -89,7 +89,6 @@ def load_enemies(enemy_folder: str, hp=40) -> dict:
     return enemies
 
 
-
 # --
 # 20x10 padding for battle menus
 
