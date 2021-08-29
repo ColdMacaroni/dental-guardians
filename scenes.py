@@ -107,7 +107,15 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     scenes = dict()
     display_size = display_width, display_height = screen_size()
 
+    battle_menu_size = (display_width//5, display_height//3)
+    battle_menu_pos = (display_width//30, display_height - display_height//3 * 1.25)
+
+    battle_textbox_size = (display_width // 2.4, display_height // 3)
+    battle_textbox_pos = ((display_width // 4),
+                          display_height - display_height//3 * 1.25)
     healthbar_pos = (display_width//2 - display_width//25, 50)
+
+    # ----------------
 
     scenes[GameStatus.TITLE_SCREEN] = Scene(
         bg=resize_to_cover(
@@ -142,28 +150,31 @@ def generate_scenes() -> dict[GameStatus, Scene]:
 
     # ----------------
 
-    battle_start_box_size = (display_width // 2, display_height // 3)
-
     scenes[GameStatus.BATTLE_START] = BattleScene(
         bg=resize_to_cover(image.load(path.join("images", "example_layout.png")), display_size),
-        menu=Printable(None, (0, 0)),
+        menu=Printable(
+            Menu(
+                {"Weapon": None, "Consumable": None},
+                battle_menu_size,
+                fonts.DEFAULT,
+                background_color=colors.RGB.WHITE,
+                padding=5,
+                text_selected=colors.RGB.LIGHT_BLUE,
+                line=True
+                ),
+            battle_menu_pos),
         statics={
             "info_box": Printable(
                 TextBox("placeholder",
                         fonts.DEFAULT,
-                        battle_start_box_size,
+                        battle_textbox_size,
                         line=True
                         ),
-                (
-                    (display_width // 4) - 10,
-                    display_height - battle_start_box_size[1] - 10,
-                )
+                battle_textbox_pos
             )
         },
         enemy=Printable(None, (display_width // 15, display_height // 25)),
         healthbar=Printable(None, healthbar_pos)
     )
-
-    del battle_start_box_size
 
     return scenes

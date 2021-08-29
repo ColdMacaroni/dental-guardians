@@ -112,26 +112,7 @@ def main():
 
     playing = True
     while playing:
-        # -- Event loop
-        for event in pygame.event.get():
-            # Mark current loop as last
-            if event.type == pygame.QUIT:
-                playing = False
-
-            elif event.type == pygame.KEYDOWN:
-                if (active_scene := all_scenes.get(status, None)) is not None and active_scene.menu.object is not None:
-                    active_menu = active_scene.menu.object
-                    if event.key == pygame.K_UP:
-                        active_menu.update_option(-1)
-
-                    elif event.key == pygame.K_DOWN:
-                        active_menu.update_option(1)
-
-                    # K_RETURN is enter key
-                    elif event.key == pygame.K_RETURN:
-                        # Update status
-                        status = active_menu.get_option()
-        # --
+        active_scene = all_scenes.get(status, None)
 
         # Reset screen
         screen.fill(colors.RGB.WHITE)
@@ -139,16 +120,18 @@ def main():
         # This would be so nice with a switch case (match)
         # -- Game statuses
         if status is GameStatus.TITLE_SCREEN:
-            # Nothing to do here that is not handled by overlay and menu
+            # Nothing to do here that is not handled by scene
             pass
 
         # Start battle
         elif status is GameStatus.BATTLE_START:
-            assert isinstance(all_scenes[status], scenes.BattleScene), f"{status} scene is {type(all_scenes[status])}" \
+            assert isinstance(active_scene, scenes.BattleScene), f"{status} scene is {type(active_scene)} " \
                                                                        f"not {type(scenes.BattleScene)}"
             # Pick enemy
-            if all_scenes[status].enemy.object is None:
-                all_scenes[status].enemy.object = choice(tuple(enemies.values()))
+            if active_scene.enemy.object is None:
+                active_scene.enemy.object = choice(tuple(enemies.values()))
+
+            active_scene.statics["info_box"].object.set_text(f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!")
 
         elif status is GameStatus.EXIT:
             playing = False
@@ -162,6 +145,28 @@ def main():
 
         # print(clock.get_fps())
         clock.tick(60)
+
+        # -- Event loop
+        for event in pygame.event.get():
+            # Mark current loop as last
+            if event.type == pygame.QUIT:
+                playing = False
+
+            elif event.type == pygame.KEYDOWN:
+                if active_scene is not None and active_scene.menu.object is not None:
+                    active_menu = active_scene.menu.object
+                    if event.key == pygame.K_UP:
+                        active_menu.update_option(-1)
+
+                    elif event.key == pygame.K_DOWN:
+                        active_menu.update_option(1)
+
+                    # K_RETURN is enter key
+                    elif event.key == pygame.K_RETURN:
+                        # Update status
+                        new_option = active_menu.get_option()
+                        status = new_option if new_option is not None else status
+        # --
 
     # Clean up and say bye
     pygame.font.quit()
