@@ -218,22 +218,25 @@ class TextBox:
     def __init__(
         self,
         text: str,
-        size: tuple[int, int],
         font: Font,
+        size=None,
         padding=5,
         fg=colors.RGB.BLACK,
         bg=colors.RGB.WHITE,
+        line=False,
         line_thickness=5,
         line_color=colors.RGB.BLACK,
     ):
         """
         :param text: Take a guess
-        :param size: Size in px for the box
         :param font: Pygame font
 
+        :param size: Size in px for the box
         :param padding: Pixels to not be touched
         :param fg: Text color
         :param bg: Box bg colour
+
+        :param line: Whether to display a line or not
         :param line_thickness: Border around the text box,
         :param line_color: Color of border, set to None to not have one
         """
@@ -243,10 +246,12 @@ class TextBox:
 
         self.fg = fg
         self.bg = bg
+
+        self.line = line
         self.line_thickness = line_thickness
         self.line_color = line_color
 
-        self.padding = padding + line_thickness
+        self.padding = padding + (line_thickness if self.line else 0)
 
     def set_text(self, new_text: str):
         self.text = new_text
@@ -256,7 +261,15 @@ class TextBox:
         Create a cool textbox!!!
         :return: pygame surface
         """
-        surface = Surface(self.size, flags=SRCALPHA)
+        if self.size is not None:
+            size = self.size
+
+        else:
+            # Get a tight fitting box.
+            size = (self.font.size(self.text)[0] + self.padding*2,
+                    self.font.get_height() + self.padding*2)
+
+        surface = Surface(size, flags=SRCALPHA)
         surface.fill(self.bg)
 
         surface.blit(
@@ -264,7 +277,7 @@ class TextBox:
             (self.padding, self.padding),
         )
 
-        if self.line_color is not None:
+        if self.line:
             return draw_border(surface, self.line_thickness, self.line_color)
         else:
             return surface

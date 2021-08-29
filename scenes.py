@@ -2,6 +2,8 @@
 # Create scenes that can be rendered in the final game
 
 # Local imports
+import fonts
+import colors
 from game_objects import screen_size, GameStatus, Enemy, Menu, TextBox
 
 # Global imports
@@ -23,11 +25,11 @@ class Printable:
 class Scene:
     bg: Surface = None
     menu: Printable = None
-    enemy: Printable = None
-    statics: Union[list[Printable], None] = None
+    statics: list[Printable] = None
 
     def get_surface(self, *args, **kwargs) -> Surface:
         surface = Surface(screen_size())
+        surface.fill(colors.RGB.WHITE)
 
         # Add the background
         if self.bg is not None:
@@ -89,8 +91,7 @@ def resize_to_cover(image: Surface, size: tuple[int, int]) -> Surface:
 
     # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
     new_img_size[not smallest] = round(
-        (new_img_size[smallest] / img_size[smallest])
-        * img_size[not smallest]
+        (new_img_size[smallest] / img_size[smallest]) * img_size[not smallest]
     )
 
     return transform.scale(image, new_img_size)
@@ -102,11 +103,37 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     :return: Dict of game status to scene.
     """
     scenes = dict()
-    display_size = screen_size()
+    display_size = display_width, display_height = screen_size()
 
     scenes[GameStatus.TITLE_SCREEN] = Scene(
-        resize_to_cover(image.load(path.join("images", "titlescreen.png")), display_size),
-        
+        resize_to_cover(
+            image.load(path.join("images", "titlescreen.png")), display_size
+        ),
+        Printable(
+            Menu(
+                {
+                    "Start": GameStatus.BATTLE_START,
+                    "Credits": GameStatus.CREDITS,
+                    "Exit": GameStatus.EXIT,
+                },
+                (200, 128),
+                fonts.BIG_MENU,
+                padding=5,
+                background_color=colors.MENU_BACKGROUND,
+                text_selected=colors.MENU_HIGHLIGHTED,
+            ),
+            (display_width // 20, display_height * 2 // 3)
+        ),
+        [
+            Printable(
+                TextBox(
+                  "Dental Guardians",
+                  fonts.TITLE,
+                ),
+                (display_width // 20, display_height // 2)
+            )
+        ]
+
     )
 
     return scenes

@@ -127,8 +127,7 @@ def main():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
-                if scenes[status].menu.object is not None:
-                    active_menu = scenes[status].menu.object
+                if (active_menu := all_scenes[status].menu.object) is not None:
                     if event.key == pygame.K_UP:
                         active_menu.update_option(-1)
 
@@ -201,26 +200,27 @@ def main():
             playing = False
 
         # -- Put the stuff
-        if active_overlay is not None:
-            if isinstance(active_overlay, list):
-                screen.blits(
-                    tuple(
-                        # Create a tuple of overlays and offsets,
-                        # the offset will be 0,0 if not set
-                        [
-                            (overlay, (0, 0))
-                            if not isinstance(overlay, tuple)
-                            else overlay
-                            for overlay in active_overlay
-                            if overlay is not None
-                        ]
-                    )
-                )
-            else:
-                screen.blit(active_overlay, (0, 0))
-
-        if active_menu is not None:
-            screen.blit(active_menu.get_surface(), active_menu_offset)
+        # if active_overlay is not None:
+        #     if isinstance(active_overlay, list):
+        #         screen.blits(
+        #             tuple(
+        #                 # Create a tuple of overlays and offsets,
+        #                 # the offset will be 0,0 if not set
+        #                 [
+        #                     (overlay, (0, 0))
+        #                     if not isinstance(overlay, tuple)
+        #                     else overlay
+        #                     for overlay in active_overlay
+        #                     if overlay is not None
+        #                 ]
+        #             )
+        #         )
+        #     else:
+        #         screen.blit(active_overlay, (0, 0))
+        #
+        # if active_menu is not None:
+        #     screen.blit(active_menu.get_surface(), active_menu_offset)
+        screen.blit(all_scenes[status].get_surface(), (0, 0))
         # --
 
         # Update display
