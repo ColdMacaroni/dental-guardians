@@ -5,7 +5,7 @@
 from game_objects import *
 
 # Global imports
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Union
 from pygame.surface import Surface
 from pygame import transform
@@ -21,9 +21,10 @@ class Printable:
 class Scene:
     bg: Surface = None
     menu: Printable = None
+    enemy: Printable = None
     statics: Union[list[Printable], None] = None
 
-    def get_surface(self) -> Surface:
+    def get_surface(self, *args, **kwargs) -> Surface:
         surface = Surface(screen_size())
 
         # Add the background
@@ -40,6 +41,17 @@ class Scene:
             surface.blit(self.menu.object.get_surface(), self.menu.pos)
 
         return surface
+
+
+class BattleScene(Scene):
+    enemy: Printable
+    healthbar: Printable
+
+    def get_surface(self, status) -> Surface:
+        surface = super().get_surface()
+        self.healthbar.object = self.enemy.object.get_healthbar()
+
+        return
 
 
 def resize_to_cover(image: Surface, size: tuple[int, int]) -> Surface:
@@ -77,6 +89,8 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     """
     scenes = dict()
 
-    scenes[GameStatus.TITLE_SCREEN] = Scene()
+    scenes[GameStatus.TITLE_SCREEN] = Scene(
+        image_load
+    )
 
     return scenes
