@@ -160,7 +160,7 @@ def generate_offsets() -> dict[str, dict[GameStatus, tuple[int, int]]]:
     menu_offsets[GameStatus.TITLE_SCREEN] = (30, height - (height // 3))
 
     text_offsets = dict()
-    text_offsets[GameStatus.BATTLE_START] = (width*2//5, height//3)
+    text_offsets[GameStatus.BATTLE_START] = (width * 2 // 5, height // 3)
 
     return {"menu": menu_offsets, "text": text_offsets}
 

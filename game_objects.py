@@ -39,6 +39,7 @@ class WeaponTypes(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
+
     BRUSH = auto()
     FLOSS = auto()
     # = auto()
@@ -59,9 +60,7 @@ def draw_border(
     # Draw borders clockwise
     rect(surface, color, ((0, 0), (width, thickness)))
     rect(surface, color, ((width - thickness, 0), (width, height)))
-    rect(
-        surface, color, ((0, height - thickness), (width, height))
-    )
+    rect(surface, color, ((0, height - thickness), (width, height)))
     rect(surface, color, ((0, 0), (thickness, height)))
 
     return surface
@@ -291,9 +290,7 @@ class Enemy:
         for sprite in self.sprites.keys():
             try:
                 # Convert returns a faster to draw image.
-                tmp = image_load(
-                    f"{path_join(folder, sprite)}.png"
-                ).convert()
+                tmp = image_load(f"{path_join(folder, sprite)}.png").convert()
 
                 # I like how images look with the black color key
                 tmp.set_colorkey(colors.RGB.BLACK)
