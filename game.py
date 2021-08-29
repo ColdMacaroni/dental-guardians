@@ -14,55 +14,6 @@ import pygame
 from random import choice
 
 
-# -- Game
-def generate_title(
-    title: str, image=None, text_color=colors.RGB.BLACK, background_color=None
-) -> pygame.surface.Surface:
-    """
-    Creates a title screen!
-    :param title: String
-    :param image: blittable background
-
-    :param text_color: Title font color
-    :param background_color: Bg color
-
-    :return: surface to be blited
-    """
-    size = screen_size()
-
-    title_screen = pygame.Surface(size, flags=pygame.SRCALPHA)
-
-    if image is not None:
-        # Resize image to fit
-        img_size = image.get_size()
-
-        # Get index of smallest side
-        smallest = 0 if img_size[0] < img_size[1] else 1
-
-        # Fill with place holders
-        new_img_size = [0, 0]
-
-        # Make smallest size of target
-        new_img_size[smallest] = size[smallest]
-
-        # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
-        new_img_size[not smallest] = round(
-            (new_img_size[smallest] / img_size[smallest])
-            * img_size[not smallest]
-        )
-
-        resized_img = pygame.transform.scale(image, new_img_size)
-
-        title_screen.blit(resized_img, (0, 0))
-
-    title_screen.blit(
-        fonts.TITLE.render(title, True, text_color, background_color),
-        (30, size[1] // 2),
-    )
-
-    return title_screen
-
-
 def load_enemies(enemy_folder: str, hp=40) -> dict:
     """
     Loads enemies from the enemy folder, using the folder names as enemy names
