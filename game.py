@@ -151,11 +151,6 @@ def main():
 
         # Start battle
         elif status is GameStatus.BATTLE_START:
-            assert isinstance(active_overlay, list), (
-                f"Active overlay is {type(active_overlay)} "
-                f"instead of list during {status}"
-            )
-
             # Pick enemy
             if enemy is None:
                 enemy = choice(tuple(enemies.values()))
@@ -220,7 +215,7 @@ def main():
         #
         # if active_menu is not None:
         #     screen.blit(active_menu.get_surface(), active_menu_offset)
-        screen.blit(all_scenes[status].get_surface(), (0, 0))
+        screen.blit(all_scenes[status].get_surface(status), (0, 0))
         # --
 
         # Update display

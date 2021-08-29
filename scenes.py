@@ -8,24 +8,24 @@ from game_objects import screen_size, GameStatus, Enemy, Menu, TextBox
 
 # Global imports
 from dataclasses import dataclass
-from typing import Union
+from typing import Any, Union
 from os import path
 from pygame.surface import Surface
 from pygame import transform
-from pygame import image
+from pygame import image as image
 
 
 @dataclass
 class Printable:
-    object: Union[Menu, TextBox, Enemy]
+    object: Union[Menu, TextBox, Enemy, None] = None
     pos: tuple[int, int] = (0, 0)
 
 
 @dataclass
 class Scene:
-    bg: Surface = None
-    menu: Printable = None
-    statics: list[Printable] = None
+    bg: Union[Surface, None]
+    menu: Printable
+    statics: dict[Any, Printable]
 
     def get_surface(self, *args, **kwargs) -> Surface:
         surface = Surface(screen_size())
@@ -36,20 +36,21 @@ class Scene:
             surface.blit(self.bg, (0, 0))
 
         # Put all the static objects first
-        for static in self.statics:
-            if static is not None:
+        for static in self.statics.values():
+            if static.object is not None:
                 surface.blit(static.object.get_surface(), static.pos)
 
         # Then put the menu so that it's never covered
-        if self.menu is not None:
+        if self.menu.object is not None:
             surface.blit(self.menu.object.get_surface(), self.menu.pos)
 
         return surface
 
 
+@dataclass
 class BattleScene(Scene):
     enemy: Printable
-    healthbar: Printable = None
+    healthbar: Printable
 
     def get_surface(self, status: GameStatus) -> Surface:
         """
@@ -64,37 +65,38 @@ class BattleScene(Scene):
         # TODO: enemy method hp_changed. Only get healthbar if it has changed.
         #       Will reduce calls.
         # Update healthbar and draw.
-        self.healthbar.object = self.enemy.object.get_healthbar()
-        surface.blit(self.healthbar.pos, self.healthbar.pos)
+        if self.enemy.object is not None:
+            self.healthbar.object = self.enemy.object.get_healthbar()
+            surface.blit(self.healthbar.pos, self.healthbar.pos)
 
         return surface
 
 
-def resize_to_cover(image: Surface, size: tuple[int, int]) -> Surface:
+def resize_to_cover(source: Surface, size: tuple[int, int]) -> Surface:
     """
     Resizes a Surface so it the smallest side matches with the target size
-    :param image: Pygame surface
+    :param source: Pygame surface
     :param size: (x, y)
     :return: Same pygame surface, scaled.
     """
-    # Resize image to fit
-    img_size = image.get_size()
+    # Resize source to fit
+    src_size = source.get_size()
 
     # Get index of smallest side
-    smallest = 0 if img_size[0] < img_size[1] else 1
+    smallest = 0 if src_size[0] < src_size[1] else 1
 
     # Fill with place holders
-    new_img_size = [0, 0]
+    new_src_size = [0, 0]
 
     # Make smallest size of target
-    new_img_size[smallest] = size[smallest]
+    new_src_size[smallest] = size[smallest]
 
     # Not 1 -> 0, Not 0 -> 1. Yeah. Calculate new size using ratio
-    new_img_size[not smallest] = round(
-        (new_img_size[smallest] / img_size[smallest]) * img_size[not smallest]
+    new_src_size[not smallest] = round(
+        (new_src_size[smallest] / src_size[smallest]) * src_size[not smallest]
     )
 
-    return transform.scale(image, new_img_size)
+    return transform.scale(source, new_src_size)
 
 
 def generate_scenes() -> dict[GameStatus, Scene]:
@@ -124,7 +126,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
             ),
             (display_width // 20, display_height * 2 // 3)
         ),
-        [
+        {"title_box":
             Printable(
                 TextBox(
                   "Dental Guardians",
@@ -132,8 +134,28 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 ),
                 (display_width // 20, display_height // 2)
             )
-        ]
+        }
 
     )
 
+    # ----------------
+
+    battle_start_box_size = (display_width * 2 // 3, display_height // 3)
+
+    scenes[GameStatus.BATTLE_START] = BattleScene(
+        resize_to_cover(image.load(path.join("images", "example_layout.png")), display_size),
+        None,
+        {
+            "info_box": Printable(
+                TextBox("placeholder",
+                        fonts.DEFAULT,
+                        battle_start_box_size
+                        ),
+                (
+                    display_width - battle_start_box_size[0] - 20,
+                    display_height - battle_start_box_size[1] - 10,
+                )
+            )
+        }
+    )
     return scenes
