@@ -107,11 +107,13 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     scenes = dict()
     display_size = display_width, display_height = screen_size()
 
+    healthbar_pos = (display_width//2 - display_width//25, 50)
+
     scenes[GameStatus.TITLE_SCREEN] = Scene(
-        resize_to_cover(
+        bg=resize_to_cover(
             image.load(path.join("images", "titlescreen.png")), display_size
         ),
-        Printable(
+        menu=Printable(
             Menu(
                 {
                     "Start": GameStatus.BATTLE_START,
@@ -126,7 +128,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
             ),
             (display_width // 20, display_height * 2 // 3)
         ),
-        {"title_box":
+        statics={"title_box":
             Printable(
                 TextBox(
                   "Dental Guardians",
@@ -143,9 +145,9 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     battle_start_box_size = (display_width // 2, display_height // 3)
 
     scenes[GameStatus.BATTLE_START] = BattleScene(
-        resize_to_cover(image.load(path.join("images", "example_layout.png")), display_size),
-        Printable(None, (0, 0)),
-        {
+        bg=resize_to_cover(image.load(path.join("images", "example_layout.png")), display_size),
+        menu=Printable(None, (0, 0)),
+        statics={
             "info_box": Printable(
                 TextBox("placeholder",
                         fonts.DEFAULT,
@@ -158,8 +160,8 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 )
             )
         },
-        Printable(None, (display_width // 15, display_height // 25)),
-        Printable(None, (display_width//2 - display_width//25, 50))
+        enemy=Printable(None, (display_width // 15, display_height // 25)),
+        healthbar=Printable(None, healthbar_pos)
     )
 
     del battle_start_box_size
