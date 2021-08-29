@@ -2,13 +2,15 @@
 # Create scenes that can be rendered in the final game
 
 # Local imports
-from game_objects import *
+from game_objects import screen_size, GameStatus, Enemy, Menu, TextBox
 
 # Global imports
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Union
+from os import path
 from pygame.surface import Surface
 from pygame import transform
+from pygame import image
 
 
 @dataclass
@@ -45,13 +47,25 @@ class Scene:
 
 class BattleScene(Scene):
     enemy: Printable
-    healthbar: Printable
+    healthbar: Printable = None
 
-    def get_surface(self, status) -> Surface:
+    def get_surface(self, status: GameStatus) -> Surface:
+        """
+        Same as Scene but with an enemy!
+        :param status: Game status for sprite
+        :return: surface
+        """
         surface = super().get_surface()
-        self.healthbar.object = self.enemy.object.get_healthbar()
 
-        return
+        surface.blit(self.enemy.object, self.enemy.pos)
+
+        # TODO: enemy method hp_changed. Only get healthbar if it has changed.
+        #       Will reduce calls.
+        # Update healthbar and draw.
+        self.healthbar.object = self.enemy.object.get_healthbar()
+        surface.blit(self.healthbar.pos, self.healthbar.pos)
+
+        return surface
 
 
 def resize_to_cover(image: Surface, size: tuple[int, int]) -> Surface:
@@ -88,9 +102,11 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     :return: Dict of game status to scene.
     """
     scenes = dict()
+    display_size = screen_size()
 
     scenes[GameStatus.TITLE_SCREEN] = Scene(
-        image_load
+        resize_to_cover(image.load(path.join("images", "titlescreen.png")), display_size),
+        
     )
 
     return scenes
