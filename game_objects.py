@@ -340,7 +340,7 @@ class Enemy:
 
     def get_healthbar(
         self,
-        size: tuple[int, int],
+        size=None,
         padding=10,
         bg_color=colors.RGB.YELLOW,
         text_color=colors.RGB.BLACK,
@@ -356,9 +356,12 @@ class Enemy:
         :param bar_color: Pygame Color
         :return: Pygame surface
         """
+        if size is None:
+            width, height = screen_size()
+            size = (width // 2, height // 4.8)
+
         # No alpha, shouldn't be necessary
         surface = Surface(size)
-
         surface.fill(bg_color)
 
         surface.blit(
