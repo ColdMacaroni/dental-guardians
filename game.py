@@ -11,9 +11,7 @@ from game_objects import screen_size, GameStatus, Enemy
 # Global imports
 import os
 import pygame
-from enum import Enum, auto
 from random import choice
-from typing import Any, Union
 
 
 # -- Game
@@ -90,7 +88,6 @@ def load_enemies(enemy_folder: str, hp=40) -> dict:
 
 
 # --
-# 20x10 padding for battle menus
 
 
 def main():
@@ -109,12 +106,7 @@ def main():
 
     all_scenes = scenes.generate_scenes()
 
-    active_menu = None
-    active_menu_offset = None
-    active_overlay = None
-
     enemies = load_enemies(os.path.join("images", "enemies"))
-    enemy = None
 
     status = GameStatus.TITLE_SCREEN
 
@@ -158,66 +150,9 @@ def main():
             if all_scenes[status].enemy.object is None:
                 all_scenes[status].enemy.object = choice(tuple(enemies.values()))
 
-            # Store so that it doesn't have to be called twice
-            #enemy_surface = enemy.get_sprite(status)
-            #enemy_offset = (width // 15, height // 25)
-
-            #healthbar_surface = enemy.get_healthbar(
-            #    (width // 2, height // 4.8)
-            #)
-            #healthbar_offset = (width - healthbar_surface.get_width() - 50, 50)
-
-            # text = TextBox(
-            #     "Hellooooo",
-            #     (width * 2 // 3, height // 3),
-            #     fonts.DEFAULT,
-            #     bg=colors.RGB.LIGHT_BLUE,
-            # )
-            # text_surface = text.get_surface()
-            # text_offset = (
-            #     width - text_surface.get_width() - 20,
-            #     height - text_surface.get_height() - 10,
-            # )
-            # # Try to replace so that positioning stays the same
-            # if len(active_overlay) > 1:
-            #     active_overlay[1] = (text_surface, text_offset)
-            # else:
-            #     active_overlay.append((text_surface, text_offset))
-            #
-            # if len(active_overlay) > 2:
-            #     active_overlay[2] = (enemy_surface, enemy_offset)
-            # else:
-            #     active_overlay.append((enemy_surface, enemy_offset))
-            #
-            # if len(active_overlay) > 3:
-            #     active_overlay[3] = (healthbar_surface, healthbar_offset)
-            # else:
-            #     active_overlay.append((healthbar_surface, healthbar_offset))
-
         elif status is GameStatus.EXIT:
             playing = False
 
-        # -- Put the stuff
-        # if active_overlay is not None:
-        #     if isinstance(active_overlay, list):
-        #         screen.blits(
-        #             tuple(
-        #                 # Create a tuple of overlays and offsets,
-        #                 # the offset will be 0,0 if not set
-        #                 [
-        #                     (overlay, (0, 0))
-        #                     if not isinstance(overlay, tuple)
-        #                     else overlay
-        #                     for overlay in active_overlay
-        #                     if overlay is not None
-        #                 ]
-        #             )
-        #         )
-        #     else:
-        #         screen.blit(active_overlay, (0, 0))
-        #
-        # if active_menu is not None:
-        #     screen.blit(active_menu.get_surface(), active_menu_offset)
         if (active_scene := all_scenes.get(status, None)) is not None:
             screen.blit(active_scene.get_surface(status), (0, 0))
         # --
