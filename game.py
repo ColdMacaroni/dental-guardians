@@ -12,7 +12,7 @@ from game_objects import screen_size, GameStatus, Enemy
 import os
 import pygame
 from random import choice
-
+from time import time
 
 def load_enemies(enemy_folder: str, hp=40) -> dict:
     """
@@ -61,6 +61,9 @@ def main():
 
     status = GameStatus.TITLE_SCREEN
 
+    # For handling changing stuff after while
+    start_time = 0
+
     playing = True
     while playing:
         active_scene = all_scenes.get(status, None)
@@ -87,6 +90,13 @@ def main():
             active_scene.statics["info_box"].object.set_text(
                 f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!"
             )
+            
+            if not start_time:
+                start_time = time()
+            else:
+                if time() - start_time > 3:
+                    start_time = 0
+                    status = GameStatus.BATTLE_MENU
 
         elif status is GameStatus.EXIT:
             playing = False
