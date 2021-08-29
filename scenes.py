@@ -159,7 +159,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
             )
         },
         Printable(None, (display_width // 15, display_height // 25)),
-        Printable(None, (display_width//2, 50))
+        Printable(None, (display_width//2 - display_width//25, 50))
     )
 
     del battle_start_box_size
