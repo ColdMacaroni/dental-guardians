@@ -117,7 +117,8 @@ def main():
         pygame.display.flip()
 
         # print(clock.get_fps())
-        clock.tick(60)
+        # clock.tick(60)
+        clock.tick(30)
 
         # -- Event loop
         for event in pygame.event.get():
