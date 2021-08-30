@@ -2,6 +2,8 @@
 # This file contains all the classes used for the game.
 
 # Local imports
+import pygame.draw
+
 import colors
 import fonts
 
@@ -381,7 +383,7 @@ class Enemy:
         self,
         size=None,
         padding=10,
-        bg_color=colors.RGB.YELLOW,
+        bg_color=colors.RGB.WHITE,
         text_color=colors.RGB.BLACK,
         bar_color=colors.RGB.GREEN,
     ) -> Surface:
@@ -408,4 +410,11 @@ class Enemy:
             (padding, padding),
         )
 
-        return surface
+        bar_thickness = size[1] // 10
+        bar_width = size[0] - 30
+
+        bar_complete = round(bar_width * (self.hp/self.max_hp))
+
+        rect(surface, colors.RGB.GREEN, ((10, size[1]//2 + bar_thickness), (bar_complete, bar_thickness)))
+
+        return draw_border(surface)

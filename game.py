@@ -127,6 +127,9 @@ def main():
                 playing = False
 
             elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    active_scene.enemy.object.hp -= 1
+
                 if (
                     active_scene is not None
                     and active_scene.menu.object is not None
