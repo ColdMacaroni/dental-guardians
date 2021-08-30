@@ -300,10 +300,13 @@ class TextBox:
         surface = Surface(size, flags=SRCALPHA)
         surface.fill(self.bg)
 
-        surface.blit(
-            self.font.render(self.text, True, self.fg),
-            (self.padding, self.padding),
-        )
+        v_offset = 0
+        for line in self.text.split('\n'):
+            surface.blit(
+                self.font.render(line, True, self.fg),
+                (self.padding, self.padding + v_offset),
+            )
+            v_offset += self.font.get_linesize()
 
         if self.line:
             return draw_border(surface, self.line_thickness, self.line_color)
