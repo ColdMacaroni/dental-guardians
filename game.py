@@ -60,10 +60,9 @@ def main():
     all_scenes = scenes.generate_scenes()
 
     # TODO: Load weapons function
-    player = game_objects.Player(1, [None])
+    player = game_objects.Player(32, [None])
 
     enemies = load_enemies(os.path.join("images", "enemies"))
-    enemy = None
 
     status = GameStatus.TITLE_SCREEN
 
@@ -104,7 +103,12 @@ def main():
                 start_time = time()
 
         elif status is GameStatus.BATTLE_MENU:
-            active_scene.statics["info_box"].object.set_text("nooooooooo")
+            active_scene.statics["info_box"].object.set_text(str(player))
+
+        elif status is GameStatus.WEAPON_MENU:
+            # Set options
+            active_scene.menu.object.options = {weapon.name: weapon for weapon in player.weapons if weapon is not None}
+            active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
 
         elif status is GameStatus.EXIT:
             playing = False
