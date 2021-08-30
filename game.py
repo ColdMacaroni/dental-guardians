@@ -107,8 +107,9 @@ def main():
 
         elif status is GameStatus.WEAPON_MENU:
             # Set options
-            active_scene.menu.object.options = {weapon.name: weapon for weapon in player.weapons if weapon is not None}
-            active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
+            if not active_scene.menu.object.options:
+                active_scene.menu.object.options = {weapon.name: weapon for weapon in player.weapons if weapon is not None}
+                active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
 
         elif status is GameStatus.EXIT:
             playing = False
