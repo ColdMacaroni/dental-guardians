@@ -171,23 +171,27 @@ class Menu:
         Changes the current option
         :param diff: Value to be added to the current option
         """
-        self.current_option += diff
+        # In case its empty
+        if self.options:
 
-        # Wrap around should support changes of more than 1
-        num_options = len(self.options)
+            self.current_option += diff
 
-        if self.current_option >= num_options:
-            self.current_option %= num_options
+            # Wrap around should support changes of more than 1
+            num_options = len(self.options)
 
-        elif self.current_option < 0:
-            self.current_option = num_options - 1
+            if self.current_option >= num_options:
+                self.current_option %= num_options
+
+            elif self.current_option < 0:
+                self.current_option = num_options - 1
 
     def get_option(self) -> Any:
         """
         Returns the value of the currently selected options
         :return: Any
         """
-        return tuple(self.options.values())[self.current_option]
+        if self.options:
+            return tuple(self.options.values())[self.current_option]
 
     def get_surface(self) -> Surface:
         """
