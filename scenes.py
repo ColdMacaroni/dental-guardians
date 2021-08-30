@@ -107,18 +107,23 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     scenes = dict()
     display_size = display_width, display_height = screen_size()
 
-    battle_menu_size = (display_width // 5, display_height // 3)
-    battle_menu_pos = (
-        display_width // 30,
-        display_height - display_height // 3 * 1.25,
-    )
-
-    battle_textbox_size = (display_width // 2.4, display_height // 3)
-    battle_textbox_pos = (
-        (display_width // 4),
-        display_height - display_height // 3 * 1.25,
-    )
-    healthbar_pos = (display_width // 2 - display_width // 25, 50)
+    # Store these for easy access because they're reused a lot
+    battle_scene_stuff = {
+        "menu": {
+            "size": (display_width // 5, display_height // 3),
+            "pos": (display_width // 30, display_height - display_height // 3 * 1.25)
+        },
+        "textbox": {
+            "size": (display_width // 2.4, display_height // 3),
+            "pos": ((display_width // 4), display_height - display_height // 3 * 1.25)
+        },
+        "healthbar": {
+            "pos": (display_width // 2 - display_width // 25, 50)
+        },
+        "enemy": {
+            "pos": (display_width // 15, display_height // 25)
+        }
+    }
 
     # ----------------
 
@@ -153,7 +158,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     )
 
     # ----------------
-
+    # TODO: BGs could be set on game.py
     scenes[GameStatus.BATTLE_START] = BattleScene(
         bg=resize_to_cover(
             image.load(path.join("images", "example_layout.png")), display_size
@@ -161,28 +166,61 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         menu=Printable(
             Menu(
                 {"Weapon": None, "Consumable": None},
-                battle_menu_size,
+                battle_scene_stuff["menu"]["size"],
                 fonts.DEFAULT,
                 background_color=colors.RGB.WHITE,
                 padding=5,
                 text_selected=colors.RGB.LIGHT_BLUE,
                 line=True,
             ),
-            battle_menu_pos,
+            battle_scene_stuff["menu"]["pos"],
         ),
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder",
+                    "placeholder enemy challenge",
                     fonts.DEFAULT,
-                    battle_textbox_size,
-                    line=True,
+                    battle_scene_stuff["textbox"]["size"],
+                    line=True
                 ),
-                battle_textbox_pos,
+                battle_scene_stuff["textbox"]["pos"],
             )
         },
-        enemy=Printable(None, (display_width // 15, display_height // 25)),
-        healthbar=Printable(None, healthbar_pos),
+        enemy=Printable(None, battle_scene_stuff["enemy"]["pos"]),
+        healthbar=Printable(None, battle_scene_stuff["healthbar"]["pos"])
+    )
+
+    # ----------------
+
+    scenes[GameStatus.BATTLE_MENU] = BattleScene(
+        bg=resize_to_cover(
+            image.load(path.join("images", "example_layout.png")), display_size
+        ),
+        menu=Printable(
+            Menu(
+                {"Weapon": GameStatus.WEAPON_MENU, "Consumable": GameStatus.WEAPON_MENU},
+                battle_scene_stuff["menu"]["size"],
+                fonts.DEFAULT,
+                background_color=colors.RGB.WHITE,
+                padding=5,
+                text_selected=colors.RGB.LIGHT_BLUE,
+                line=True,
+            ),
+            battle_scene_stuff["menu"]["pos"],
+        ),
+        statics={
+            "info_box": Printable(
+                TextBox(
+                    "placeholder info",
+                    fonts.DEFAULT,
+                    battle_scene_stuff["textbox"]["size"],
+                    line=True
+                ),
+                battle_scene_stuff["textbox"]["pos"],
+            )
+        },
+        enemy=scenes[GameStatus.BATTLE_START].enemy,
+        healthbar=scenes[GameStatus.BATTLE_START].healthbar
     )
 
     return scenes

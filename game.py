@@ -14,6 +14,7 @@ import pygame
 from random import choice
 from time import time
 
+
 def load_enemies(enemy_folder: str, hp=40) -> dict:
     """
     Loads enemies from the enemy folder, using the folder names as enemy names
@@ -58,6 +59,7 @@ def main():
     all_scenes = scenes.generate_scenes()
 
     enemies = load_enemies(os.path.join("images", "enemies"))
+    enemy = None
 
     status = GameStatus.TITLE_SCREEN
 
@@ -82,19 +84,23 @@ def main():
             )
             # Pick enemy
             if active_scene.enemy.object is None:
-                active_scene.enemy.object = choice(tuple(enemies.values()))
+                active_scene.enemy.object = enemy = choice(tuple(enemies.values()))
 
             active_scene.statics["info_box"].object.set_text(
                 f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!"
             )
 
+            # Theres probably a way to do this with async but idk how to use that.
             # Go to next animation after a sec
-            if not start_time:
-                start_time = time()
-            else:
+            if start_time:
                 if time() - start_time > 3:
                     start_time = 0
                     status = GameStatus.BATTLE_MENU
+            else:
+                start_time = time()
+
+        elif status is GameStatus.BATTLE_MENU:
+            active_scene.statics["info_box"].object.set_text()
 
         elif status is GameStatus.EXIT:
             playing = False

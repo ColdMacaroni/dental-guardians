@@ -9,6 +9,7 @@ import fonts
 from enum import Enum, auto
 from typing import Any
 from os.path import join as path_join
+from dataclasses import dataclass, field
 from pygame import SRCALPHA
 from pygame.surface import Surface
 from pygame.draw import rect
@@ -48,7 +49,7 @@ class GameStatus(Enum):
     DEFEAT = auto()
 
 
-class WeaponTypes(Enum):
+class WeaponType(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
@@ -56,6 +57,25 @@ class WeaponTypes(Enum):
     BRUSH = auto()
     FLOSS = auto()
     # = auto()
+
+
+class Weapon:
+    def __init__(self, name: str, damage: int, weapon_type: WeaponType):
+        self.name = name
+        self.damage = damage
+        self.type = weapon_type
+
+
+@dataclass
+class Player:
+    level: int
+    weapons: list[Weapon]
+    max_hp: int = 32
+    hp: int = field(init=False)
+
+    def __post_init__(self):
+        self.hp = self.max_hp
+
 
 
 def draw_border(
