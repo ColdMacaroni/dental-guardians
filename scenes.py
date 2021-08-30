@@ -262,4 +262,37 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         healthbar=scenes[GameStatus.BATTLE_START].healthbar,
     )
 
+    scenes[GameStatus.ITEM_MENU] = BattleScene(
+        bg=resize_to_cover(
+            image.load(path.join("images", "example_layout.png")), display_size
+        ),
+        menu=Printable(
+            Menu(
+                {
+
+                },
+                battle_scene_stuff["menu"]["size"],
+                fonts.DEFAULT,
+                background_color=colors.RGB.WHITE,
+                padding=5,
+                text_selected=colors.RGB.LIGHT_BLUE,
+                line=True,
+            ),
+            battle_scene_stuff["menu"]["pos"],
+        ),
+        statics={
+            "info_box": Printable(
+                TextBox(
+                    "placeholder info2",
+                    fonts.DEFAULT,
+                    battle_scene_stuff["textbox"]["size"],
+                    line=True,
+                ),
+                battle_scene_stuff["textbox"]["pos"],
+            )
+        },
+        enemy=scenes[GameStatus.BATTLE_START].enemy,
+        healthbar=scenes[GameStatus.BATTLE_START].healthbar,
+    )
+
     return scenes
