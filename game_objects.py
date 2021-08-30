@@ -7,9 +7,8 @@ import fonts
 
 # Global imports. No bloat hehe
 from enum import Enum, auto
-from typing import Any
+from typing import Any, Union
 from os.path import join as path_join
-from dataclasses import dataclass, field
 from pygame import SRCALPHA
 from pygame.surface import Surface
 from pygame.draw import rect
@@ -66,16 +65,15 @@ class Weapon:
         self.type = weapon_type
 
 
-@dataclass
 class Player:
-    level: int
-    weapons: list[Weapon]
-    max_hp: int = 32
-    hp: int = field(init=False)
-
-    def __post_init__(self):
+    def __init__(self, max_hp, weapons: list[Union[Weapon, None]], level=1):
+        self.max_hp = max_hp
         self.hp = self.max_hp
+        self.weapons = weapons
+        self.level = level
 
+    def __str__(self):
+        return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."
 
 
 def draw_border(

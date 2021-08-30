@@ -5,6 +5,7 @@
 # Local imports
 import colors
 import fonts
+import game_objects
 import scenes
 from game_objects import screen_size, GameStatus, Enemy
 
@@ -58,6 +59,9 @@ def main():
 
     all_scenes = scenes.generate_scenes()
 
+    # TODO: Load weapons function
+    player = game_objects.Player(1, [None])
+
     enemies = load_enemies(os.path.join("images", "enemies"))
     enemy = None
 
@@ -93,14 +97,14 @@ def main():
             # Theres probably a way to do this with async but idk how to use that.
             # Go to next animation after a sec
             if start_time:
-                if time() - start_time > 3:
+                if time() - start_time > 1.5:
                     start_time = 0
                     status = GameStatus.BATTLE_MENU
             else:
                 start_time = time()
 
         elif status is GameStatus.BATTLE_MENU:
-            active_scene.statics["info_box"].object.set_text()
+            active_scene.statics["info_box"].object.set_text("nooooooooo")
 
         elif status is GameStatus.EXIT:
             playing = False

@@ -111,18 +111,20 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     battle_scene_stuff = {
         "menu": {
             "size": (display_width // 5, display_height // 3),
-            "pos": (display_width // 30, display_height - display_height // 3 * 1.25)
+            "pos": (
+                display_width // 30,
+                display_height - display_height // 3 * 1.25,
+            ),
         },
         "textbox": {
             "size": (display_width // 2.4, display_height // 3),
-            "pos": ((display_width // 4), display_height - display_height // 3 * 1.25)
+            "pos": (
+                (display_width // 4),
+                display_height - display_height // 3 * 1.25,
+            ),
         },
-        "healthbar": {
-            "pos": (display_width // 2 - display_width // 25, 50)
-        },
-        "enemy": {
-            "pos": (display_width // 15, display_height // 25)
-        }
+        "healthbar": {"pos": (display_width // 2 - display_width // 25, 50)},
+        "enemy": {"pos": (display_width // 15, display_height // 25)},
     }
 
     # ----------------
@@ -165,7 +167,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         ),
         menu=Printable(
             Menu(
-                {"Weapon": None, "Consumable": None},
+                {"Weapon": None, "Consumable": None, "Exit": None},
                 battle_scene_stuff["menu"]["size"],
                 fonts.DEFAULT,
                 background_color=colors.RGB.WHITE,
@@ -181,13 +183,13 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                     "placeholder enemy challenge",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
-                    line=True
+                    line=True,
                 ),
                 battle_scene_stuff["textbox"]["pos"],
             )
         },
         enemy=Printable(None, battle_scene_stuff["enemy"]["pos"]),
-        healthbar=Printable(None, battle_scene_stuff["healthbar"]["pos"])
+        healthbar=Printable(None, battle_scene_stuff["healthbar"]["pos"]),
     )
 
     # ----------------
@@ -198,7 +200,11 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         ),
         menu=Printable(
             Menu(
-                {"Weapon": GameStatus.WEAPON_MENU, "Consumable": GameStatus.WEAPON_MENU},
+                {
+                    "Weapon": GameStatus.WEAPON_MENU,
+                    "Consumable": GameStatus.ITEM_MENU,
+                    "Exit": GameStatus.TITLE_SCREEN
+                },
                 battle_scene_stuff["menu"]["size"],
                 fonts.DEFAULT,
                 background_color=colors.RGB.WHITE,
@@ -214,13 +220,13 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                     "placeholder info",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
-                    line=True
+                    line=True,
                 ),
                 battle_scene_stuff["textbox"]["pos"],
             )
         },
         enemy=scenes[GameStatus.BATTLE_START].enemy,
-        healthbar=scenes[GameStatus.BATTLE_START].healthbar
+        healthbar=scenes[GameStatus.BATTLE_START].healthbar,
     )
 
     return scenes
