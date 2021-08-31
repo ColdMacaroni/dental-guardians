@@ -74,6 +74,9 @@ class Player:
         self.weapons = weapons
         self.level = level
 
+        # TODO ADD ACTUAL ITEMS
+        self.items = {"Braces": None}
+
     def __str__(self):
         return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."
 

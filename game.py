@@ -3,11 +3,13 @@
 # A game for teaching kids about dental hygiene
 
 # Local imports
+from typing import Union
+
 import colors
 import fonts
 import game_objects
 import scenes
-from game_objects import screen_size, GameStatus, Enemy
+from game_objects import screen_size, GameStatus, Enemy, Weapon
 
 # Global imports
 import os
@@ -16,7 +18,7 @@ from random import choice
 from time import time
 
 
-def load_enemies(enemy_folder: str, hp=40) -> dict:
+def load_enemies(enemy_folder: str, hp=40) -> tuple:
     """
     Loads enemies from the enemy folder, using the folder names as enemy names
     :param enemy_folder: A string to a folder containing folders
@@ -30,16 +32,39 @@ def load_enemies(enemy_folder: str, hp=40) -> dict:
         if os.path.isdir(os.path.join(enemy_folder, folder))
     ]
 
-    enemies = dict()
+    enemies = list()
     for enemy in enemy_folders:
         # Tuple is sprite size
-        enemies[enemy] = Enemy(enemy, hp, (256, 256))
+        # TODO: Read args from jason file
+        # args = json.load(os.path.join(enemy_folder, )
+        new_enemy = Enemy(enemy, hp, (256, 256))
 
-        enemies[enemy].load_sprites(os.path.join(enemy_folder, enemy))
+        new_enemy.load_sprites(os.path.join(enemy_folder, enemy))
+        enemies.append(new_enemy)
 
-    return enemies
+    return tuple(enemies)
 
 
+# TODO: Could probably fuse this with load enemy
+def load_weapon(weapon_folder: str) -> list[Union[Weapon, None]]:
+    weapon_folders = [
+        folder
+
+        for folder in os.listdir(weapon_folder)
+        if os.path.isdir(os.path.join(weapon_folder, folder))
+    ]
+    weapons = list()
+
+    for weapon in weapon_folders:
+        # Tuple is sprite size
+        # TODO: Read args from jason file
+        # args = json.load(os.path.join(enemy_folder, )
+        new_weapon = Weapon(weapon, 2, game_objects.WeaponType.BRUSH)
+
+        # new_weapon.load_sprites(os.path.join(enemy_folder, weapon))
+        weapons.append(new_weapon)
+
+    return weapons if weapons else (None,)
 # --
 
 
@@ -59,8 +84,7 @@ def main():
 
     all_scenes = scenes.generate_scenes()
 
-    # TODO: Load weapons function
-    player = game_objects.Player(32, [None])
+    player = game_objects.Player(32, load_weapon(os.path.join("images", "weapons")))
 
     enemies = load_enemies(os.path.join("images", "enemies"))
 
@@ -87,7 +111,7 @@ def main():
             )
             # Pick enemy
             if active_scene.enemy.object is None:
-                active_scene.enemy.object = enemy = choice(tuple(enemies.values()))
+                active_scene.enemy.object = choice(enemies)
 
             active_scene.statics["info_box"].object.set_text(
                 f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!"
@@ -109,6 +133,12 @@ def main():
             # Set options
             if not active_scene.menu.object.options:
                 active_scene.menu.object.options = {weapon.name: weapon for weapon in player.weapons if weapon is not None}
+                active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
+
+        elif status is GameStatus.ITEM_MENU:
+            # Set options
+            if not active_scene.menu.object.options:
+                active_scene.menu.object.options = player.items
                 active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
 
         elif status is GameStatus.EXIT:

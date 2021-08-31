@@ -165,28 +165,28 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         bg=resize_to_cover(
             image.load(path.join("images", "example_layout.png")), display_size
         ),
-        menu=Printable(
-            Menu(
-                {"Weapon": None, "Consumable": None, "Exit": None},
-                battle_scene_stuff["menu"]["size"],
-                fonts.DEFAULT,
-                background_color=colors.RGB.WHITE,
-                padding=5,
-                text_selected=colors.RGB.LIGHT_BLUE,
-                line=True,
-            ),
-            battle_scene_stuff["menu"]["pos"],
-        ),
+        menu=Printable(None),
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder enemy challenge",
+                    "",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
                     line=True,
                 ),
                 battle_scene_stuff["textbox"]["pos"],
-            )
+            ),
+            "menu": Printable(
+                Menu(
+                    {"Weapon": None, "Consumable": None, "Exit": None},
+                    battle_scene_stuff["menu"]["size"],
+                    fonts.DEFAULT,
+                    background_color=colors.RGB.WHITE,
+                    padding=5,
+                    text_selected=colors.RGB.LIGHT_BLUE,
+                    line=True,
+                ),
+                battle_scene_stuff["menu"]["pos"])
         },
         enemy=Printable(None, battle_scene_stuff["enemy"]["pos"]),
         healthbar=Printable(None, battle_scene_stuff["healthbar"]["pos"]),
@@ -217,7 +217,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder info",
+                    "",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
                     line=True,
