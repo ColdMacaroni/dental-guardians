@@ -136,7 +136,7 @@ def main():
                 active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
 
         elif status is GameStatus.ITEM_MENU:
-            # Set options
+            # Set weapons.
             if not active_scene.menu.object.options:
                 active_scene.menu.object.options = player.items
                 active_scene.menu.object.options["Back"] = GameStatus.BATTLE_MENU
