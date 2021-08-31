@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # game.py
 # A game for teaching kids about dental hygiene
+# v0.1
 
 # Local imports
 from typing import Union
