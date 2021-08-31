@@ -131,7 +131,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
 
     scenes[GameStatus.TITLE_SCREEN] = Scene(
         bg=resize_to_cover(
-            image.load(path.join("images", "titlescreen.png")), display_size
+            image.load(path.join("images", "titlescreen1.jpg")), display_size
         ),
         menu=Printable(
             Menu(
