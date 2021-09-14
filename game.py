@@ -20,12 +20,12 @@ from random import choice
 from time import time
 
 
-def load_enemy(data: dict) -> Enemy:
+def load_enemy(data: dict, folder: str) -> Enemy:
     weaknesses = {
         "placeholder": object()
     }
 
-    return Enemy(
+    enemy = Enemy(
         name=data["name"],
         hp=data["hp"],
         size=(data["size"]["x"],
@@ -33,12 +33,17 @@ def load_enemy(data: dict) -> Enemy:
         weakness=weaknesses.get(data.get("weakness", None), None)
     )
 
+    enemy.load_sprites(folder, data["sprites"])
 
-def load_weapon(data: dict) -> Weapon:
+    return enemy
+
+
+def load_weapon(data: dict, folder: str) -> Weapon:
     types = {
         "brush": game_objects.WeaponType.BRUSH,
         "floss": game_objects.WeaponType.FLOSS
     }
+    print(folder)
     return Weapon(
         name=data["name"],
         damage=data["damage"],
@@ -62,7 +67,7 @@ def load_objects(folder: str) -> tuple:
         with open(os.path.join(folder, obj, "data.json")) as file:
             data = json.load(file)
 
-        objects.append(types[data["type"]](data))
+        objects.append(types[data["type"]](data, os.path.join(folder, obj)))
 
     return tuple(objects)
 # --
@@ -90,7 +95,7 @@ def main():
         32, weapons=weapons)
 
     enemies = load_objects(os.path.join("objects", "enemies"))
-
+    print(enemies)
     status = GameStatus.TITLE_SCREEN
 
     # For handling changing stuff after while

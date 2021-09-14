@@ -336,10 +336,10 @@ class Enemy:
             "idle": None,
             "hurt": None,
             "attack": None,
-            "defeated": None,
+            "defeat": None,
         }
 
-    def load_sprites(self, folder: str) -> None:
+    def load_sprites(self, folder: str, sprites_dict: dict=None) -> None:
         """
         Load the sprites into this thing!
         :param folder: A Folder containing idle.png
@@ -347,10 +347,13 @@ class Enemy:
                                            attack.png
                                            defeated.png
         """
+        if sprites_dict is None:
+            sprites_dict = {key: f"{key}.png" for key in self.sprites.keys()}
+
         for sprite in self.sprites.keys():
             try:
                 # Convert returns a faster to draw image.
-                tmp = image_load(f"{path_join(folder, sprite)}.png").convert()
+                tmp = image_load(f"{path_join(folder, sprites_dict[sprite])}").convert()
 
                 # I like how images look with the black color key
                 tmp.set_colorkey(colors.RGB.BLACK)
@@ -368,7 +371,8 @@ class Enemy:
         :return: Pygame surface
         """
         # Set which sprite to use
-        status_sprite = {GameStatus.BATTLE_START: "idle"}
+        status_sprite = {GameStatus.BATTLE_START: "idle",
+                         }
 
         surface = Surface(self.size, flags=SRCALPHA)
         surface.fill(colors.RGBA.TRANSPARENT)
@@ -376,8 +380,10 @@ class Enemy:
         # Get either the sprite for the given status
         # or the first item as a fallback
         sprite = self.sprites[
-            status_sprite.get(status, tuple(self.sprites.keys())[0])
+            status_sprite.get(status, None)
         ]
+        if sprite is None:
+            sprite = tuple(status_sprite.values())[0]
 
         if sprite is not None:
             # noinspection PyTypeChecker
