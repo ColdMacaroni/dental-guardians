@@ -1,0 +1,7 @@
+{
+    "type": "enemy",
+    "name": "Caries",
+    "size": {"x": 256, "y": 256},
+
+    "hp": 16
+}
