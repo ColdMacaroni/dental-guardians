@@ -339,7 +339,7 @@ class Enemy:
             "defeat": None,
         }
 
-    def load_sprites(self, folder: str, sprites_dict: dict=None) -> None:
+    def load_sprites(self, folder: str, sprites_dict: dict = None) -> None:
         """
         Load the sprites into this thing!
         :param folder: A Folder containing idle.png
@@ -353,7 +353,9 @@ class Enemy:
         for sprite in self.sprites.keys():
             try:
                 # Convert returns a faster to draw image.
-                tmp = image_load(f"{path_join(folder, sprites_dict[sprite])}").convert()
+                tmp = image_load(
+                    f"{path_join(folder, sprites_dict[sprite])}"
+                ).convert()
 
                 # I like how images look with the black color key
                 tmp.set_colorkey(colors.RGB.BLACK)
@@ -371,17 +373,16 @@ class Enemy:
         :return: Pygame surface
         """
         # Set which sprite to use
-        status_sprite = {GameStatus.BATTLE_START: "idle",
-                         }
+        status_sprite = {
+            GameStatus.BATTLE_START: "idle",
+        }
 
         surface = Surface(self.size, flags=SRCALPHA)
         surface.fill(colors.RGBA.TRANSPARENT)
 
         # Get either the sprite for the given status
         # or the first item as a fallback
-        sprite = self.sprites[
-            status_sprite.get(status, None)
-        ]
+        sprite = self.sprites[status_sprite.get(status, None)]
         if sprite is None:
             sprite = tuple(status_sprite.values())[0]
 
@@ -425,8 +426,15 @@ class Enemy:
         bar_thickness = size[1] // 10
         bar_width = size[0] - 30
 
-        bar_complete = round(bar_width * (self.hp/self.max_hp))
+        bar_complete = round(bar_width * (self.hp / self.max_hp))
 
-        rect(surface, colors.RGB.GREEN, ((10, size[1]//2 + bar_thickness), (bar_complete, bar_thickness)))
+        rect(
+            surface,
+            colors.RGB.GREEN,
+            (
+                (10, size[1] // 2 + bar_thickness),
+                (bar_complete, bar_thickness),
+            ),
+        )
 
         return draw_border(surface)

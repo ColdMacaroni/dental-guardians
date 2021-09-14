@@ -186,7 +186,8 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                     text_selected=colors.RGB.LIGHT_BLUE,
                     line=True,
                 ),
-                battle_scene_stuff["menu"]["pos"])
+                battle_scene_stuff["menu"]["pos"],
+            ),
         },
         enemy=Printable(None, battle_scene_stuff["enemy"]["pos"]),
         healthbar=Printable(None, battle_scene_stuff["healthbar"]["pos"]),
@@ -203,7 +204,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 {
                     "Weapon": GameStatus.WEAPON_MENU,
                     "Consumable": GameStatus.ITEM_MENU,
-                    "Exit": GameStatus.TITLE_SCREEN
+                    "Exit": GameStatus.TITLE_SCREEN,
                 },
                 battle_scene_stuff["menu"]["size"],
                 fonts.DEFAULT,
@@ -235,9 +236,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         ),
         menu=Printable(
             Menu(
-                {
-
-                },
+                {},
                 battle_scene_stuff["menu"]["size"],
                 fonts.DEFAULT,
                 background_color=colors.RGB.WHITE,
@@ -268,9 +267,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         ),
         menu=Printable(
             Menu(
-                {
-
-                },
+                {},
                 battle_scene_stuff["menu"]["size"],
                 fonts.DEFAULT,
                 background_color=colors.RGB.WHITE,

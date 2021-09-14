@@ -21,16 +21,13 @@ from time import time
 
 
 def load_enemy(data: dict, folder: str) -> Enemy:
-    weaknesses = {
-        "placeholder": object()
-    }
+    weaknesses = {"placeholder": object()}
 
     enemy = Enemy(
         name=data["name"],
         hp=data["hp"],
-        size=(data["size"]["x"],
-              data["size"]["x"]),
-        weakness=weaknesses.get(data.get("weakness", None), None)
+        size=(data["size"]["x"], data["size"]["x"]),
+        weakness=weaknesses.get(data.get("weakness", None), None),
     )
 
     enemy.load_sprites(folder, data["sprites"])
@@ -41,22 +38,20 @@ def load_enemy(data: dict, folder: str) -> Enemy:
 def load_weapon(data: dict, folder: str) -> Weapon:
     types = {
         "brush": game_objects.WeaponType.BRUSH,
-        "floss": game_objects.WeaponType.FLOSS
+        "floss": game_objects.WeaponType.FLOSS,
     }
     print(folder)
     return Weapon(
         name=data["name"],
         damage=data["damage"],
-        weapon_type=types.get(data.get("weapon_type", None), None)
+        weapon_type=types.get(data.get("weapon_type", None), None),
     )
 
 
 def load_objects(folder: str) -> tuple:
 
     folders = [
-        f
-        for f in os.listdir(folder)
-        if os.path.isdir(os.path.join(folder, f))
+        f for f in os.listdir(folder) if os.path.isdir(os.path.join(folder, f))
     ]
     print(os.listdir(folder))
     types = {"enemy": load_enemy, "weapon": load_weapon}
@@ -70,6 +65,8 @@ def load_objects(folder: str) -> tuple:
         objects.append(types[data["type"]](data, os.path.join(folder, obj)))
 
     return tuple(objects)
+
+
 # --
 
 
@@ -91,11 +88,10 @@ def main():
 
     weapons = list(load_objects(os.path.join("objects", "weapons")))
 
-    player = game_objects.Player(
-        32, weapons=weapons)
+    player = game_objects.Player(32, weapons=weapons)
 
     enemies = load_objects(os.path.join("objects", "enemies"))
-    print(enemies)
+
     status = GameStatus.TITLE_SCREEN
 
     # For handling changing stuff after while
