@@ -44,6 +44,7 @@ class GameStatus(Enum):
     BATTLE_MENU = auto()
     ITEM_MENU = auto()
     WEAPON_MENU = auto()
+    USE_ITEM = auto()
     PLAYER_ATTACK = auto()
     ENEMY_ATTACK = auto()
     VICTORY = auto()
@@ -54,17 +55,58 @@ class WeaponType(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
-
+    NONE = auto()
     BRUSH = auto()
     FLOSS = auto()
     # = auto()
 
+class ItemType(Enum):
+    """
+    These enum objects will be used to keep track of what the game is doing
+    """
+    NONE = auto()
+    DEFENCE = auto()
+    DAMAGE = auto()
+    # = auto()
+
+
+class Status:
+    def __init__(self, status):
+        self.status = status
+        self.weapon = None
+        self.item = None
+
+    def update(self, new_status):
+        if new_status in GameStatus:
+            self.status = new_status
+
+        elif isinstance(new_status, Weapon):
+            self.status = GameStatus.PLAYER_ATTACK
+            self.weapon = new_status
+
+        elif isinstance(new_status, ItemType):
+            self.status = GameStatus.USE_ITEM
+            self.item = new_status
+
+
 
 class Weapon:
-    def __init__(self, name: str, damage: int, weapon_type: WeaponType):
+    def __init__(self, name: str, damage: int, weapon_type: WeaponType, size: tuple[int, int] = (256, 256)):
         self.name = name
         self.damage = damage
         self.type = weapon_type
+        self.size = size
+        self.sprite = None
+
+    def load_sprite(self, filename):
+        sprite = pygame.image.load(filename).convert()
+        sprite.set_colorkey(colors.RGB.BLACK)
+        self.sprite = sprite
+
+    def get_surface(self):
+        width, height = screen_size()
+        surface = pygame.Surface((width, height))
+        surface.blit(self.sprite, (width - self.size[0], height - self.size[1]))
 
 
 class Player:
@@ -375,6 +417,8 @@ class Enemy:
         # Set which sprite to use
         status_sprite = {
             GameStatus.BATTLE_START: "idle",
+            GameStatus.BATTLE_MENU: "idle",
+            GameStatus.PLAYER_ATTACK: "hurt"
         }
 
         surface = Surface(self.size, flags=SRCALPHA)
@@ -382,9 +426,9 @@ class Enemy:
 
         # Get either the sprite for the given status
         # or the first item as a fallback
-        sprite = self.sprites[status_sprite.get(status, None)]
+        sprite = self.sprites.get(status_sprite.get(status, None), None)
         if sprite is None:
-            sprite = tuple(status_sprite.values())[0]
+            sprite = tuple(self.sprites.values())[0]
 
         if sprite is not None:
             # noinspection PyTypeChecker
