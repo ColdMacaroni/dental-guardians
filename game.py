@@ -47,17 +47,19 @@ def load_weapon(data: dict) -> Weapon:
 
 
 def load_objects(folder: str) -> tuple:
+
     folders = [
-        folder
-        for folder in os.listdir(folder)
-        if os.path.isdir(os.path.join(folder, folder))
+        f
+        for f in os.listdir(folder)
+        if os.path.isdir(os.path.join(folder, f))
     ]
+    print(os.listdir(folder))
     types = {"enemy": load_enemy, "weapon": load_weapon}
 
     objects = list()
 
     for obj in folders:
-        with open(os.path.join(obj, "data.json")) as file:
+        with open(os.path.join(folder, obj, "data.json")) as file:
             data = json.load(file)
 
         objects.append(types[data["type"]](data))
@@ -82,13 +84,12 @@ def main():
 
     all_scenes = scenes.generate_scenes()
 
-    weapons = load_objects(os.path.join()
+    weapons = list(load_objects(os.path.join("objects", "weapons")))
 
     player = game_objects.Player(
         32, weapons=weapons)
-    )
 
-    enemies = load_enemies(os.path.join("images", "enemies"))
+    enemies = load_objects(os.path.join("objects", "enemies"))
 
     status = GameStatus.TITLE_SCREEN
 
