@@ -77,7 +77,7 @@ class Status:
         self.item = None
 
     def update(self, new_status):
-        if new_status in GameStatus:
+        if isinstance(new_status, GameStatus):
             self.status = new_status
 
         elif isinstance(new_status, Weapon):
@@ -87,6 +87,8 @@ class Status:
         elif isinstance(new_status, ItemType):
             self.status = GameStatus.USE_ITEM
             self.item = new_status
+
+        print(self.status)
 
 
 

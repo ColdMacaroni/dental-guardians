@@ -10,7 +10,7 @@ import colors
 import fonts
 import game_objects
 import scenes
-from game_objects import screen_size, GameStatus, Enemy, Weapon
+from game_objects import screen_size, GameStatus, Enemy, Weapon, Status
 
 # Global imports
 import os
@@ -92,14 +92,14 @@ def main():
 
     enemies = load_objects(os.path.join("objects", "enemies"))
 
-    status = GameStatus.TITLE_SCREEN
+    status = Status(GameStatus.TITLE_SCREEN)
 
     # For handling changing stuff after while
     start_time = 0
 
     playing = True
     while playing:
-        active_scene = all_scenes.get(status, None)
+        active_scene = all_scenes.get(status.status, None)
 
         # Reset screen
         screen.fill(colors.RGB.WHITE)
@@ -108,9 +108,9 @@ def main():
         # -- Game statuses
         # - Nothing to do for TITLE_SCREEN
         # Start battle
-        if status is GameStatus.BATTLE_START:
+        if status.status is GameStatus.BATTLE_START:
             assert isinstance(active_scene, scenes.BattleScene), (
-                f"{status} scene is {type(active_scene)} "
+                f"{status.status} scene is {type(active_scene)} "
                 f"not {type(scenes.BattleScene)}"
             )
             # Pick enemy
@@ -118,7 +118,7 @@ def main():
                 active_scene.enemy.object = choice(enemies)
 
             active_scene.statics["info_box"].object.set_text(
-                f"{all_scenes[status].enemy.object.name.capitalize()} challenges you!"
+                f"{all_scenes[status.status].enemy.object.name.capitalize()} challenges you!"
             )
 
             # Theres probably a way to do this with async but idk how to use that.
@@ -126,14 +126,14 @@ def main():
             if start_time:
                 if time() - start_time > 1.5:
                     start_time = 0
-                    status = GameStatus.BATTLE_MENU
+                    status.update(GameStatus.BATTLE_MENU)
             else:
                 start_time = time()
 
-        elif status is GameStatus.BATTLE_MENU:
+        elif status.status is GameStatus.BATTLE_MENU:
             active_scene.statics["info_box"].object.set_text(str(player))
 
-        elif status is GameStatus.WEAPON_MENU:
+        elif status.status is GameStatus.WEAPON_MENU:
             # Set options
             if not active_scene.menu.object.options:
                 active_scene.menu.object.options = {
@@ -145,7 +145,7 @@ def main():
                     "Back"
                 ] = GameStatus.BATTLE_MENU
 
-        elif status is GameStatus.ITEM_MENU:
+        elif status.status is GameStatus.ITEM_MENU:
             # Set weapons.
             if not active_scene.menu.object.options:
                 active_scene.menu.object.options = player.items
@@ -153,11 +153,11 @@ def main():
                     "Back"
                 ] = GameStatus.BATTLE_MENU
 
-        elif status is GameStatus.EXIT:
+        elif status.status is GameStatus.EXIT:
             playing = False
 
-        if (active_scene := all_scenes.get(status, None)) is not None:
-            screen.blit(active_scene.get_surface(status), (0, 0))
+        if (active_scene := all_scenes.get(status.status, None)) is not None:
+            screen.blit(active_scene.get_surface(status.status), (0, 0))
         # --
 
         # Update display
@@ -192,8 +192,8 @@ def main():
                     elif event.key == pygame.K_RETURN:
                         # Update status
                         new_option = active_menu.get_option()
-                        status = (
-                            new_option if new_option is not None else status
+                        status.update(
+                            new_option if new_option is not None else status.status
                         )
         # --
 
