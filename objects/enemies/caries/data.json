@@ -3,5 +3,12 @@
     "name": "Caries",
     "size": {"x": 256, "y": 256},
 
-    "hp": 16
+    "hp": 16,
+    "sprites":
+    {
+        "idle": "idle.png",
+        "hurt": "hurt.png",
+        "defeat": "defeat.png",
+        "attack": "attack.png"
+    }
 }
