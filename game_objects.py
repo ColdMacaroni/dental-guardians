@@ -88,8 +88,7 @@ class Status:
             self.status = GameStatus.USE_ITEM
             self.item = new_status
 
-        print(self.status)
-
+        # print(self.status)
 
 
 class Weapon:
