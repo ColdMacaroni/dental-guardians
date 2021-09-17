@@ -88,7 +88,8 @@ class Status:
             self.status = GameStatus.USE_ITEM
             self.item = new_status
 
-        # print(self.status)
+        print(self.status)
+
 
 
 class Weapon:
@@ -463,9 +464,15 @@ class Enemy:
         surface = Surface(size)
         surface.fill(bg_color)
 
+        linesize = fonts.HEALTHBAR.get_linesize()
+
         surface.blit(
             fonts.HEALTHBAR.render(self.name.capitalize(), True, text_color),
             (padding, padding),
+        )
+        surface.blit(
+            fonts.HEALTHBAR.render(f"{self.hp}/{self.max_hp} HP", True, text_color),
+            (padding, padding + linesize),
         )
 
         bar_thickness = size[1] // 10
@@ -475,9 +482,18 @@ class Enemy:
 
         rect(
             surface,
-            colors.RGB.GREEN,
+            text_color,
             (
-                (10, size[1] // 2 + bar_thickness),
+                (10, linesize*2.5),
+                (bar_width, bar_thickness),
+            ),
+        )
+
+        rect(
+            surface,
+            bar_color,
+            (
+                (10, linesize*2.5),
                 (bar_complete, bar_thickness),
             ),
         )
