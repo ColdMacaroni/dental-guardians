@@ -153,6 +153,10 @@ def main():
                     "Back"
                 ] = GameStatus.BATTLE_MENU
 
+        elif status.status is GameStatus.PLAYER_ATTACK:
+            active_scene.statics["info_box"].object.set_text("Hewoo")
+                ##status.status
+
         elif status.status is GameStatus.EXIT:
             playing = False
 

@@ -196,9 +196,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     # ----------------
 
     scenes[GameStatus.BATTLE_MENU] = BattleScene(
-        bg=resize_to_cover(
-            image.load(path.join("images", "example_layout.png")), display_size
-        ),
+        bg=scenes[GameStatus.BATTLE_START].bg,
         menu=Printable(
             Menu(
                 {
@@ -231,9 +229,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     )
 
     scenes[GameStatus.WEAPON_MENU] = BattleScene(
-        bg=resize_to_cover(
-            image.load(path.join("images", "example_layout.png")), display_size
-        ),
+        bg=scenes[GameStatus.BATTLE_START].bg,
         menu=Printable(
             Menu(
                 {},
@@ -262,9 +258,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     )
 
     scenes[GameStatus.ITEM_MENU] = BattleScene(
-        bg=resize_to_cover(
-            image.load(path.join("images", "example_layout.png")), display_size
-        ),
+        bg=scenes[GameStatus.BATTLE_START].bg,
         menu=Printable(
             Menu(
                 {},
@@ -291,5 +285,26 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         enemy=scenes[GameStatus.BATTLE_START].enemy,
         healthbar=scenes[GameStatus.BATTLE_START].healthbar,
     )
+
+    og_txt_pos = battle_scene_stuff["textbox"]["pos"]
+    og_menu_pos = battle_scene_stuff["menu"]["pos"]
+    scenes[GameStatus.PLAYER_ATTACK] = BattleScene(
+        bg=scenes[GameStatus.BATTLE_START].bg,
+        menu=Printable(),
+        statics={
+            "info_box": Printable(
+                TextBox(
+                    "You attack the enemy and deal damage!!!!",
+                    fonts.DEFAULT,
+                    ((display_width*2)//3, battle_scene_stuff["textbox"]["size"][1]),
+                    line=True,
+                ),
+                (og_txt_pos[0], og_txt_pos[1])
+            )
+        },
+        enemy=scenes[GameStatus.BATTLE_START].enemy,
+        healthbar=scenes[GameStatus.BATTLE_START].healthbar,
+    )
+    del og_txt_pos, og_menu_pos
 
     return scenes
