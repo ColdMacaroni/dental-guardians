@@ -420,7 +420,8 @@ class Enemy:
         status_sprite = {
             GameStatus.BATTLE_START: "idle",
             GameStatus.BATTLE_MENU: "idle",
-            GameStatus.PLAYER_ATTACK: "hurt"
+            GameStatus.PLAYER_ATTACK: "hurt",
+            GameStatus.ENEMY_ATTACK: "attack"
         }
 
         surface = Surface(self.size, flags=SRCALPHA)
