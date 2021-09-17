@@ -118,7 +118,7 @@ def main():
                 active_scene.enemy.object = choice(enemies)
 
             active_scene.statics["info_box"].object.set_text(
-                f"{all_scenes[status.status].enemy.object.name.capitalize()} challenges you!"
+                f"{active_scene.enemy.object.name.capitalize()} challenges you!"
             )
 
             # Theres probably a way to do this with async but idk how to use that.
@@ -154,8 +154,17 @@ def main():
                 ] = GameStatus.BATTLE_MENU
 
         elif status.status is GameStatus.PLAYER_ATTACK:
-            active_scene.statics["info_box"].object.set_text("Hewoo")
-                ##status.status
+            print("Oh no youre attackuing what")
+            if active_scene.enemy.object.hp <= 0:
+                status.update(GameStatus.VICTORY)
+            else:
+                # TODO
+                active_scene.enemy.object.hp -= 0.5
+                status.update(GameStatus.ENEMY_ATTACK)
+
+        elif status.status is GameStatus.USE_ITEM:
+            print("Haha youre using", status.item)
+            status.update(GameStatus.ENEMY_ATTACK)
 
         elif status.status is GameStatus.EXIT:
             playing = False
