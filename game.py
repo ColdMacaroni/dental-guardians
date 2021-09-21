@@ -123,8 +123,9 @@ def main():
 
             # Theres probably a way to do this with async but idk how to use that.
             # Go to next animation after a sec
+            # Needs nested if so the else doesnt reset the start time
             if start_time:
-                if time() - start_time > 1.5:
+                if time() - start_time > 1:
                     start_time = 0
                     status.update(GameStatus.BATTLE_MENU)
             else:
@@ -154,29 +155,39 @@ def main():
                 ] = GameStatus.BATTLE_MENU
 
         elif status.status is GameStatus.PLAYER_ATTACK:
-            print("Oh no youre attackuing what")
-            active_scene.enemy.object.take_damage(status.weapon)
 
-            if active_scene.enemy.object.hp <= 0:
-                status.update(GameStatus.VICTORY)
+            if start_time:
+                if time() - start_time > 3:
+                    start_time = 0
+
+                    if active_scene.enemy.object.hp <= 0:
+                        status.update(GameStatus.VICTORY)
+                    else:
+                        status.update(GameStatus.ENEMY_ATTACK)
+
             else:
-                status.update(GameStatus.ENEMY_ATTACK)
+                start_time = time()
+                active_scene.enemy.object.take_damage(status.weapon)
+
 
         elif status.status is GameStatus.USE_ITEM:
             print("Haha youre using", status.item)
             status.update(GameStatus.ENEMY_ATTACK)
 
         elif status.status is GameStatus.ENEMY_ATTACK:
-            active_scene.enemy.object.attack(player)
             if start_time:
                 if time() - start_time > 3:
                     start_time = 0
+
                     if player.hp <= 0:
                         status.update(GameStatus.DEFEAT)
                     else:
                         status.update(GameStatus.BATTLE_MENU)
+            # This part will only run once
             else:
                 start_time = time()
+                player.hp -= active_scene.enemy.object.get_damage()
+
         elif status.status is GameStatus.EXIT:
             playing = False
 

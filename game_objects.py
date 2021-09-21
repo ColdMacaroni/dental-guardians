@@ -406,7 +406,7 @@ class Enemy:
         dmg = 2
         if weapon.type is self.weakness:
             dmg *= 2
-        
+
         self.hp -= dmg
         return dmg
 
