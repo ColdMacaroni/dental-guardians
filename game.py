@@ -178,7 +178,6 @@ def main():
                 active_scene.statics["info_box"].object.set_text(
                     f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!"
                 )
-                print("HEASFAS_F_")
                 del damage_taken
 
         elif status.status is GameStatus.USE_ITEM:

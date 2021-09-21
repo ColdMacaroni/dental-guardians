@@ -172,7 +172,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     # TODO: BGs could be set on game.py
     scenes[GameStatus.BATTLE_START] = BattleScene(
         bg=resize_to_cover(
-            image.load(path.join("images", "example_layout.png")), display_size
+            image.load(path.join("images", "bgs", "dentist.jpg")), display_size
         ),
         menu=Printable(None),
         statics={

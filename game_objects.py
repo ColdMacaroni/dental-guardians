@@ -430,7 +430,7 @@ class Enemy:
             "defeat": None,
         }
 
-    def load_sprites(self, folder: str, sprites_dict: dict = None) -> None:
+    def load_sprites(self, folder: str, sprites_dict: dict=None) -> None:
         """
         Load the sprites into this thing!
         :param folder: A Folder containing idle.png
@@ -522,7 +522,6 @@ class Enemy:
         # No alpha, shouldn't be necessary
         surface = Surface(size)
         surface.fill(bg_color)
-
         linesize = fonts.HEALTHBAR.get_linesize()
 
         surface.blit(
@@ -581,7 +580,7 @@ class Player:
         self.items = items
 
     def __str__(self):
-        return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."
+        return f"{self.hp}/{self.max_hp} HP\nLevel {self.level}."
 
     def take_damage(self, dmg: Union[int, float]) -> int:
         taken = dmg - self.defence / 2
