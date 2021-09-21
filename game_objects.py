@@ -60,15 +60,18 @@ class WeaponType(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
+
     NONE = auto()
     BRUSH = auto()
     FLOSS = auto()
     # = auto()
 
+
 class ItemType(Enum):
     """
     These enum objects will be used to keep track of what the game is doing
     """
+
     NONE = auto()
     DEFENCE = auto()
     DAMAGE = auto()
@@ -95,7 +98,13 @@ class Status:
 
 
 class Weapon:
-    def __init__(self, name: str, damage: int, weapon_type: WeaponType, size: tuple[int, int] = (256, 256)):
+    def __init__(
+        self,
+        name: str,
+        damage: int,
+        weapon_type: WeaponType,
+        size: tuple[int, int] = (256, 256),
+    ):
         self.name = name
         self.damage = damage
         self.type = weapon_type
@@ -110,11 +119,13 @@ class Weapon:
     def get_surface(self):
         width, height = screen_size()
         surface = pygame.Surface((width, height))
-        surface.blit(self.sprite, (width - self.size[0], height - self.size[1]))
+        surface.blit(
+            self.sprite, (width - self.size[0], height - self.size[1])
+        )
 
 
 class Item:
-    def __init__(self, name: str, item_type: ItemType, magnitude: int=1):
+    def __init__(self, name: str, item_type: ItemType, magnitude: int = 1):
         self.name = name
         self.type = item_type
         self.mag = magnitude
@@ -282,6 +293,7 @@ class TextBox:
     """
     General purpose text box
     """
+
     def __init__(
         self,
         text: str,
@@ -356,10 +368,10 @@ class TextBox:
                         split = i
                         break
                 else:
-                    if string[split-WIDTH] != ' ':
+                    if string[split - WIDTH] != ' ':
                         prev -= 1
 
-                n_lines.append(string[prev: split])
+                n_lines.append(string[prev:split])
                 prev = split + 1
                 idx = prev
                 idx += 1
@@ -392,7 +404,12 @@ class TextBox:
 
 class Enemy:
     def __init__(
-        self, name: str, hp: int, size: tuple[int, int], damage=2, weakness=None
+        self,
+        name: str,
+        hp: int,
+        size: tuple[int, int],
+        damage=2,
+        weakness=None,
     ):
         """
         :param name: The name of the enemy
@@ -462,7 +479,7 @@ class Enemy:
             GameStatus.BATTLE_START: "idle",
             GameStatus.BATTLE_MENU: "idle",
             GameStatus.PLAYER_ATTACK: "hurt",
-            GameStatus.ENEMY_ATTACK: "attack"
+            GameStatus.ENEMY_ATTACK: "attack",
         }
 
         surface = Surface(self.size, flags=SRCALPHA)
@@ -513,7 +530,9 @@ class Enemy:
             (padding, padding),
         )
         surface.blit(
-            fonts.HEALTHBAR.render(f"{self.hp}/{self.max_hp} HP", True, text_color),
+            fonts.HEALTHBAR.render(
+                f"{self.hp}/{self.max_hp} HP", True, text_color
+            ),
             (padding, padding + linesize),
         )
 
@@ -526,7 +545,7 @@ class Enemy:
             surface,
             text_color,
             (
-                (10, linesize*2.5),
+                (10, linesize * 2.5),
                 (bar_width, bar_thickness),
             ),
         )
@@ -535,7 +554,7 @@ class Enemy:
             surface,
             bar_color,
             (
-                (10, linesize*2.5),
+                (10, linesize * 2.5),
                 (bar_complete, bar_thickness),
             ),
         )
@@ -545,7 +564,13 @@ class Enemy:
 
 # noinspection PyRedeclaration
 class Player:
-    def __init__(self, max_hp, weapons: list[Union[Weapon, None]], items: list[Union[Item, None]], level=1):
+    def __init__(
+        self,
+        max_hp,
+        weapons: list[Union[Weapon, None]],
+        items: list[Union[Item, None]],
+        level=1,
+    ):
         self.max_hp = max_hp
         self.hp = self.max_hp
         self.weapons = weapons

@@ -172,8 +172,12 @@ def main():
 
             else:
                 start_time = time()
-                damage_taken = active_scene.enemy.object.take_damage(status.weapon)
-                active_scene.statics["info_box"].object.set_text(f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!")
+                damage_taken = active_scene.enemy.object.take_damage(
+                    status.weapon
+                )
+                active_scene.statics["info_box"].object.set_text(
+                    f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!"
+                )
                 print("HEASFAS_F_")
                 del damage_taken
 
@@ -235,7 +239,9 @@ def main():
                         # Update status
                         new_option = active_menu.get_option()
                         status.update(
-                            new_option if new_option is not None else status.status
+                            new_option
+                            if new_option is not None
+                            else status.status
                         )
         # --
 

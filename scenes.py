@@ -304,7 +304,6 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         healthbar=scenes[GameStatus.BATTLE_START].healthbar,
     )
 
-
     scenes[GameStatus.ENEMY_ATTACK] = BattleScene(
         bg=scenes[GameStatus.BATTLE_START].bg,
         menu=Printable(None),
