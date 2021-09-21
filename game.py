@@ -74,6 +74,7 @@ def main():
     """
     Contains and sets up the main event loop for pygame
     """
+    TIME = 1.8
     # Start up pygame
     pygame.init()
     pygame.font.init()
@@ -110,13 +111,16 @@ def main():
         # - Nothing to do for TITLE_SCREEN
         # Start battle
         if status.status is GameStatus.BATTLE_START:
-            assert isinstance(active_scene, scenes.BattleScene), (
-                f"{status.status} scene is {type(active_scene)} "
-                f"not {type(scenes.BattleScene)}"
-            )
+            # assert isinstance(active_scene, scenes.BattleScene), (
+            #     f"{status.status} scene is {type(active_scene)} "
+            #     f"not {type(scenes.BattleScene)}"
+            # )
             # Pick enemy
             if active_scene.enemy.object is None:
                 active_scene.enemy.object = choice(enemies)
+
+            # Reset this to 0 so it goes back to what the static menu shows
+            all_scenes[GameStatus.BATTLE_MENU].menu.object.current_option = 0
 
             active_scene.statics["info_box"].object.set_text(
                 f"{active_scene.enemy.object.name.capitalize()} challenges you!"
@@ -126,7 +130,7 @@ def main():
             # Go to next animation after a sec
             # Needs nested if so the else doesnt reset the start time
             if start_time:
-                if time() - start_time > 1:
+                if time() - start_time > TIME:
                     start_time = 0
                     status.update(GameStatus.BATTLE_MENU)
             else:
@@ -162,7 +166,7 @@ def main():
         elif status.status is GameStatus.PLAYER_ATTACK:
 
             if start_time:
-                if time() - start_time > 1.2:
+                if time() - start_time > TIME:
                     start_time = 0
 
                     if active_scene.enemy.object.hp <= 0:
@@ -186,7 +190,7 @@ def main():
 
         elif status.status is GameStatus.ENEMY_ATTACK:
             if start_time:
-                if time() - start_time > 1.2:
+                if time() - start_time > TIME:
                     start_time = 0
 
                     if player.hp <= 0:
