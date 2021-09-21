@@ -115,6 +115,9 @@ class Weapon:
         surface = pygame.Surface((width, height))
         surface.blit(self.sprite, (width - self.size[0], height - self.size[1]))
 
+class Item:
+    def __init__():
+        ...
 
 def draw_border(
     surface: Surface, thickness=5, color=colors.RGB.BLACK
@@ -335,10 +338,10 @@ class TextBox:
         # 0 as an approximate because anything else would be difficult and
         # inefficient
         WIDTH = round(self.size[0] // self.font.size('0')[0])
-
+        print(WIDTH)
         # Split into lines. Then wrap each one
         lines = text.split('\n')
-
+        final_lines = list()
         for string in lines:
             prev = 0
             idx = 0
@@ -360,9 +363,9 @@ class TextBox:
                 prev = split + 1
                 idx = prev
                 idx += 1
-            print(n_lines)
-        print(lines)
-        return lines
+            final_lines += n_lines
+
+        return final_lines
 
 
     def get_surface(self) -> Surface:
@@ -403,7 +406,7 @@ class Enemy:
         self.size = size
         self.weakness = weakness
         self.damage = 2
-        
+
         self.sprites = {
             "idle": None,
             "hurt": None,
@@ -550,7 +553,7 @@ class Player:
         self.level = level
 
         # TODO ADD ACTUAL ITEMS
-        self.items = {"Braces": None}
+        self.items = {"Braces": }
 
     def __str__(self):
         return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."

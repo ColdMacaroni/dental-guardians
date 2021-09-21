@@ -168,7 +168,8 @@ def main():
             else:
                 start_time = time()
                 damage_taken = active_scene.enemy.object.take_damage(status.weapon)
-                active_scene.statics["info_box"].object.text = f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!"
+                active_scene.statics["info_box"].object.set_text(f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!")
+                print("HEASFAS_F_")
                 del damage_taken
 
 
