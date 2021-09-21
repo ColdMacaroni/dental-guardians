@@ -126,6 +126,15 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         "healthbar": {"pos": (display_width // 2 - display_width // 25, 50)},
         "enemy": {"pos": (display_width // 15, display_height // 25)},
     }
+    battle_scene_stuff["big_box"] = {
+        "size": (
+            (battle_scene_stuff["textbox"]["pos"][0]
+             + battle_scene_stuff["textbox"]["size"][0])
+            - battle_scene_stuff["menu"]["pos"][0],
+            battle_scene_stuff["textbox"]["size"][1]
+                ),
+        "pos": battle_scene_stuff["menu"]["pos"]
+    }
 
     # ----------------
 
@@ -285,7 +294,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         enemy=scenes[GameStatus.BATTLE_START].enemy,
         healthbar=scenes[GameStatus.BATTLE_START].healthbar,
     )
-    # -- Player does stuff
+    # ------------------ Player does stuff
     scenes[GameStatus.PLAYER_ATTACK] = BattleScene(
         bg=scenes[GameStatus.BATTLE_START].bg,
         menu=Printable(None),
@@ -294,10 +303,10 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 TextBox(
                     "You have attacked the enemy!",
                     fonts.DEFAULT,
-                    battle_scene_stuff["textbox"]["size"],
+                    battle_scene_stuff["big_box"]["size"],
                     line=True,
                 ),
-                battle_scene_stuff["textbox"]["pos"],
+                battle_scene_stuff["big_box"]["pos"],
             )
         },
         enemy=scenes[GameStatus.BATTLE_START].enemy,
@@ -312,10 +321,10 @@ def generate_scenes() -> dict[GameStatus, Scene]:
                 TextBox(
                     "placeholder info2",
                     fonts.DEFAULT,
-                    battle_scene_stuff["textbox"]["size"],
+                    battle_scene_stuff["big_box"]["size"],
                     line=True,
                 ),
-                battle_scene_stuff["textbox"]["pos"],
+                battle_scene_stuff["big_box"]["pos"],
             )
         },
         enemy=scenes[GameStatus.BATTLE_START].enemy,
