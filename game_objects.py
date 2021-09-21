@@ -19,6 +19,11 @@ from pygame.image import load as image_load
 from pygame.transform import scale as transform_scale
 
 
+# Forward declaration
+class Player:
+    pass
+
+
 # This one is at the top because it's very important.
 def screen_size() -> tuple[int, int]:
     """
@@ -109,20 +114,6 @@ class Weapon:
         width, height = screen_size()
         surface = pygame.Surface((width, height))
         surface.blit(self.sprite, (width - self.size[0], height - self.size[1]))
-
-
-class Player:
-    def __init__(self, max_hp, weapons: list[Union[Weapon, None]], level=1):
-        self.max_hp = max_hp
-        self.hp = self.max_hp
-        self.weapons = weapons
-        self.level = level
-
-        # TODO ADD ACTUAL ITEMS
-        self.items = {"Braces": None}
-
-    def __str__(self):
-        return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."
 
 
 def draw_border(
@@ -363,7 +354,7 @@ class TextBox:
 
 class Enemy:
     def __init__(
-        self, name: str, hp: int, size: tuple[int, int], weakness=None
+        self, name: str, hp: int, size: tuple[int, int], damage=2, weakness=None
     ):
         """
         :param name: The name of the enemy
@@ -375,7 +366,8 @@ class Enemy:
         self.hp = self.max_hp = hp
         self.size = size
         self.weakness = weakness
-
+        self.damage = 2
+        
         self.sprites = {
             "idle": None,
             "hurt": None,
@@ -409,6 +401,17 @@ class Enemy:
 
             except FileNotFoundError:
                 print(f"{sprite}.png does not exist for {self.name}")
+
+    def take_damage(self, weapon: Weapon):
+        dmg = 2
+        if weapon.type is self.weakness:
+            dmg *= 2
+        
+        self.hp -= dmg
+        return dmg
+
+    def get_damage(self):
+        return self.damage
 
     def get_sprite(self, status: GameStatus) -> Surface:
         """
@@ -500,3 +503,18 @@ class Enemy:
         )
 
         return draw_border(surface)
+
+
+
+class Player:
+    def __init__(self, max_hp, weapons: list[Union[Weapon, None]], level=1):
+        self.max_hp = max_hp
+        self.hp = self.max_hp
+        self.weapons = weapons
+        self.level = level
+
+        # TODO ADD ACTUAL ITEMS
+        self.items = {"Braces": None}
+
+    def __str__(self):
+        return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."

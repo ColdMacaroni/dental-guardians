@@ -155,17 +155,28 @@ def main():
 
         elif status.status is GameStatus.PLAYER_ATTACK:
             print("Oh no youre attackuing what")
+            active_scene.enemy.object.take_damage(status.weapon)
+
             if active_scene.enemy.object.hp <= 0:
                 status.update(GameStatus.VICTORY)
             else:
-                # TODO
-                active_scene.enemy.object.hp -= 0.5
                 status.update(GameStatus.ENEMY_ATTACK)
 
         elif status.status is GameStatus.USE_ITEM:
             print("Haha youre using", status.item)
             status.update(GameStatus.ENEMY_ATTACK)
 
+        elif status.status is GameStatus.ENEMY_ATTACK:
+            active_scene.enemy.object.attack(player)
+            if start_time:
+                if time() - start_time > 3:
+                    start_time = 0
+                    if player.hp <= 0:
+                        status.update(GameStatus.DEFEAT)
+                    else:
+                        status.update(GameStatus.BATTLE_MENU)
+            else:
+                start_time = time()
         elif status.status is GameStatus.EXIT:
             playing = False
 
