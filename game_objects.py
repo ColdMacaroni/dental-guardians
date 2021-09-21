@@ -304,8 +304,6 @@ class TextBox:
         :param line_thickness: Border around the text box,
         :param line_color: Color of border, set to None to not have one
         """
-        self.text = text
-        self.size = size
         self.font = font
 
         self.fg = fg
@@ -317,29 +315,67 @@ class TextBox:
 
         self.padding = padding + (line_thickness if self.line else 0)
 
+        if size is not None:
+            self.size = size
+            self.text = self.format_text(text)
+
+        else:
+            # Get a tight fitting box.
+            self.size = (
+                self.font.size(text)[0] + self.padding * 2,
+                self.font.get_height() + self.padding * 2,
+            )
+            self.text = [text]
+
     def set_text(self, new_text: str):
-        self.text = new_text
+        self.text = self.format_text(new_text)
+
+    def format_text(self, text) -> list[str]:
+        # WIDTH is the number of chars each line can have. I'm just gonna use
+        # 0 as an approximate because anything else would be difficult and
+        # inefficient
+        WIDTH = round(self.size[0] // self.font.size('0')[0])
+
+        # Split into lines. Then wrap each one
+        lines = text.split('\n')
+
+        for string in lines:
+            prev = 0
+            idx = 0
+            split = 0
+            n_lines = list()
+            while idx < len(string):
+                split = prev + WIDTH - 1
+                for i in range(split, idx - 1, -1):
+                    if i >= len(string):
+                        break
+                    if string[i] == ' ':
+                        split = i
+                        break
+                else:
+                    if string[split-WIDTH] != ' ':
+                        prev -= 1
+
+                n_lines.append(string[prev: split])
+                prev = split + 1
+                idx = prev
+                idx += 1
+            print(n_lines)
+        print(lines)
+        return lines
+
 
     def get_surface(self) -> Surface:
         """
         Create a cool textbox!!!
         :return: pygame surface
         """
-        if self.size is not None:
-            size = self.size
 
-        else:
-            # Get a tight fitting box.
-            size = (
-                self.font.size(self.text)[0] + self.padding * 2,
-                self.font.get_height() + self.padding * 2,
-            )
-
-        surface = Surface(size, flags=SRCALPHA)
+        surface = Surface(self.size, flags=SRCALPHA)
         surface.fill(self.bg)
 
         v_offset = 0
-        for line in self.text.split('\n'):
+        for line in self.text:
             surface.blit(
                 self.font.render(line, True, self.fg),
                 (self.padding, self.padding + v_offset),
