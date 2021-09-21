@@ -157,7 +157,7 @@ def main():
         elif status.status is GameStatus.PLAYER_ATTACK:
 
             if start_time:
-                if time() - start_time > 3:
+                if time() - start_time > 1.2:
                     start_time = 0
 
                     if active_scene.enemy.object.hp <= 0:
@@ -167,7 +167,9 @@ def main():
 
             else:
                 start_time = time()
-                active_scene.enemy.object.take_damage(status.weapon)
+                damage_taken = active_scene.enemy.object.take_damage(status.weapon)
+                active_scene.statics["info_box"].object.text = f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!"
+                del damage_taken
 
 
         elif status.status is GameStatus.USE_ITEM:
@@ -176,7 +178,7 @@ def main():
 
         elif status.status is GameStatus.ENEMY_ATTACK:
             if start_time:
-                if time() - start_time > 3:
+                if time() - start_time > 1.2:
                     start_time = 0
 
                     if player.hp <= 0:

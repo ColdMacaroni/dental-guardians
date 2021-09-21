@@ -292,7 +292,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder info2",
+                    "You have attacked the enemy!",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
                     line=True,
