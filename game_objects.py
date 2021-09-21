@@ -89,12 +89,9 @@ class Status:
             self.status = GameStatus.PLAYER_ATTACK
             self.weapon = new_status
 
-        elif isinstance(new_status, ItemType):
+        elif isinstance(new_status, Item):
             self.status = GameStatus.USE_ITEM
             self.item = new_status
-
-        print(self.status)
-
 
 
 class Weapon:
@@ -115,9 +112,13 @@ class Weapon:
         surface = pygame.Surface((width, height))
         surface.blit(self.sprite, (width - self.size[0], height - self.size[1]))
 
+
 class Item:
-    def __init__():
-        ...
+    def __init__(self, name: str, item_type: ItemType, magnitude: int=1):
+        self.name = name
+        self.type = item_type
+        self.mag = magnitude
+
 
 def draw_border(
     surface: Surface, thickness=5, color=colors.RGB.BLACK
@@ -281,7 +282,6 @@ class TextBox:
     """
     General purpose text box
     """
-
     def __init__(
         self,
         text: str,
@@ -338,7 +338,7 @@ class TextBox:
         # 0 as an approximate because anything else would be difficult and
         # inefficient
         WIDTH = round(self.size[0] // self.font.size('0')[0])
-        print(WIDTH)
+
         # Split into lines. Then wrap each one
         lines = text.split('\n')
         final_lines = list()
@@ -366,7 +366,6 @@ class TextBox:
             final_lines += n_lines
 
         return final_lines
-
 
     def get_surface(self) -> Surface:
         """
@@ -405,7 +404,7 @@ class Enemy:
         self.hp = self.max_hp = hp
         self.size = size
         self.weakness = weakness
-        self.damage = 2
+        self.damage = damage
 
         self.sprites = {
             "idle": None,
@@ -544,16 +543,29 @@ class Enemy:
         return draw_border(surface)
 
 
-
+# noinspection PyRedeclaration
 class Player:
-    def __init__(self, max_hp, weapons: list[Union[Weapon, None]], level=1):
+    def __init__(self, max_hp, weapons: list[Union[Weapon, None]], items: list[Union[Item, None]], level=1):
         self.max_hp = max_hp
         self.hp = self.max_hp
         self.weapons = weapons
         self.level = level
 
-        # TODO ADD ACTUAL ITEMS
-        self.items = {"Braces": }
+        self.defence = 0
+
+        self.items = items
 
     def __str__(self):
         return f"{self.hp}/{self.max_hp} HP\n{self.level} damage."
+
+    def take_damage(self, dmg: Union[int, float]) -> int:
+        taken = dmg - self.defence / 2
+        if taken < 0:
+            taken = 0
+
+        self.hp -= taken
+
+        if self.hp < 0:
+            self.hp = 0
+
+        return taken

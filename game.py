@@ -10,7 +10,7 @@ import colors
 import fonts
 import game_objects
 import scenes
-from game_objects import screen_size, GameStatus, Enemy, Weapon, Status
+from game_objects import screen_size, GameStatus, Enemy, Weapon, Status, Item
 
 # Global imports
 import os
@@ -87,8 +87,9 @@ def main():
     all_scenes = scenes.generate_scenes()
 
     weapons = list(load_objects(os.path.join("objects", "weapons")))
+    items = [Item("Braces", game_objects.ItemType.DEFENCE)]
 
-    player = game_objects.Player(32, weapons=weapons)
+    player = game_objects.Player(32, weapons=weapons, items=items)
 
     enemies = load_objects(os.path.join("objects", "enemies"))
 
@@ -149,7 +150,11 @@ def main():
         elif status.status is GameStatus.ITEM_MENU:
             # Set weapons.
             if not active_scene.menu.object.options:
-                active_scene.menu.object.options = player.items
+                active_scene.menu.object.options = {
+                    item.name: item
+                    for item in player.items
+                    if item is not None
+                }
                 active_scene.menu.object.options[
                     "Back"
                 ] = GameStatus.BATTLE_MENU
@@ -171,7 +176,6 @@ def main():
                 active_scene.statics["info_box"].object.set_text(f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!")
                 print("HEASFAS_F_")
                 del damage_taken
-
 
         elif status.status is GameStatus.USE_ITEM:
             print("Haha youre using", status.item)
