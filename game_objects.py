@@ -582,6 +582,10 @@ class Player:
     def __str__(self):
         return f"{self.hp}/{self.max_hp} HP\nLevel {self.level}."
 
+    def use(self, item: ItemType):
+        print("Used", item)
+        pass
+
     def take_damage(self, dmg: Union[int, float]) -> int:
         taken = dmg - self.defence / 2
         if taken < 0:

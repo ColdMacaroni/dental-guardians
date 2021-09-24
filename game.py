@@ -74,7 +74,17 @@ def main():
     """
     Contains and sets up the main event loop for pygame
     """
+    # Some utility stuff
     TIME = 1.8
+
+    i_type = game_objects.ItemType
+    itemtype_names = {
+        i_type.DAMAGE: "damage",
+        i_type.DEFENCE: "defence",
+        i_type.NONE: "nothing"
+    }
+    del i_type
+
     # Start up pygame
     pygame.init()
     pygame.font.init()
@@ -186,6 +196,11 @@ def main():
 
         elif status.status is GameStatus.USE_ITEM:
             print("Haha youre using", status.item)
+            print(active_scene)
+            active_scene.statics["textbox"].object.set_text(f"You use {status.item.name} "
+                                                            f"and gain {itemtype_names[status.item.type]}!")
+
+            player.use(status.item)
             status.update(GameStatus.ENEMY_ATTACK)
 
         elif status.status is GameStatus.ENEMY_ATTACK:
