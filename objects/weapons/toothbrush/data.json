@@ -1,6 +1,6 @@
 {
     "type": "weapon",
-    "name": "toothbrush",
+    "name": "Toothbrush",
     "damage": 13,
     "weapon_type": "brush"
 }

@@ -417,7 +417,7 @@ class Enemy:
         :param size: (x, y) tuple
         :param weakness: WeaponTypes attribute
         """
-        self.name = name
+        self.name = name.title()
         self.hp = self.max_hp = hp
         self.size = size
         self.weakness = weakness
@@ -582,8 +582,10 @@ class Player:
     def __str__(self):
         return f"{self.hp}/{self.max_hp} HP\nLevel {self.level}."
 
-    def use(self, item: ItemType):
-        print("Used", item)
+    def use(self, item: Item):
+        if item.type is ItemType.DEFENCE:
+            self.defence += 1
+
         pass
 
     def take_damage(self, dmg: Union[int, float]) -> int:

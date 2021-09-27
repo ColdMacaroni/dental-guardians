@@ -254,7 +254,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder info",
+                    "",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
                     line=True,
@@ -283,7 +283,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder info2",
+                    "",
                     fonts.DEFAULT,
                     battle_scene_stuff["textbox"]["size"],
                     line=True,
@@ -301,7 +301,25 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         statics={
             "info_box": Printable(
                 TextBox(
-                    "You have attacked the enemy!",
+                    "",
+                    fonts.DEFAULT,
+                    battle_scene_stuff["big_box"]["size"],
+                    line=True,
+                ),
+                battle_scene_stuff["big_box"]["pos"],
+            )
+        },
+        enemy=scenes[GameStatus.BATTLE_START].enemy,
+        healthbar=scenes[GameStatus.BATTLE_START].healthbar,
+    )
+
+    scenes[GameStatus.USE_ITEM] = BattleScene(
+        bg=scenes[GameStatus.BATTLE_START].bg,
+        menu=Printable(None),
+        statics={
+            "info_box": Printable(
+                TextBox(
+                    "",
                     fonts.DEFAULT,
                     battle_scene_stuff["big_box"]["size"],
                     line=True,
@@ -319,7 +337,7 @@ def generate_scenes() -> dict[GameStatus, Scene]:
         statics={
             "info_box": Printable(
                 TextBox(
-                    "placeholder info2",
+                    "",
                     fonts.DEFAULT,
                     battle_scene_stuff["big_box"]["size"],
                     line=True,

@@ -133,7 +133,7 @@ def main():
             all_scenes[GameStatus.BATTLE_MENU].menu.object.current_option = 0
 
             active_scene.statics["info_box"].object.set_text(
-                f"{active_scene.enemy.object.name.capitalize()} challenges you!"
+                f"{active_scene.enemy.object.name} challenges you!"
             )
 
             # Theres probably a way to do this with async but idk how to use that.
@@ -190,18 +190,22 @@ def main():
                     status.weapon
                 )
                 active_scene.statics["info_box"].object.set_text(
-                    f"You attacked the enemy with {status.weapon.name} and dealt {damage_taken} damage!"
+                    f"You attacked {active_scene.enemy.object.name} with {status.weapon.name} "
+                    f"and dealt {damage_taken} damage!"
                 )
                 del damage_taken
 
         elif status.status is GameStatus.USE_ITEM:
-            print("Haha youre using", status.item)
-            print(active_scene)
-            active_scene.statics["textbox"].object.set_text(f"You use {status.item.name} "
-                                                            f"and gain {itemtype_names[status.item.type]}!")
+            if start_time:
+                if time() - start_time > TIME:
+                    start_time = 0
+                    status.update(GameStatus.ENEMY_ATTACK)
+            else:
+                start_time = time()
 
-            player.use(status.item)
-            status.update(GameStatus.ENEMY_ATTACK)
+                active_scene.statics["info_box"].object.set_text(f"You use {status.item.name} "
+                                                             f"and gain {itemtype_names[status.item.type]}!")
+                player.use(status.item)
 
         elif status.status is GameStatus.ENEMY_ATTACK:
             if start_time:
@@ -215,7 +219,14 @@ def main():
             # This part will only run once
             else:
                 start_time = time()
-                player.hp -= active_scene.enemy.object.get_damage()
+
+                damage_taken = active_scene.enemy.object.get_damage()
+                player.take_damage(damage_taken)
+
+                active_scene.statics["info_box"].object.set_text(
+                    f"{active_scene.enemy.object.name} attacked you "
+                    f"and dealt {damage_taken} damage!"
+                )
 
         elif status.status is GameStatus.EXIT:
             playing = False
