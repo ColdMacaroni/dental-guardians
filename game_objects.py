@@ -23,6 +23,9 @@ from pygame.transform import scale as transform_scale
 class Player:
     pass
 
+def nice_float(num: float) -> Union[int, float]:
+    return num if num % 1 else int(num)
+
 
 # This one is at the top because it's very important.
 def screen_size() -> tuple[int, int]:
@@ -580,16 +583,19 @@ class Player:
         self.items = items
 
     def __str__(self):
-        return f"{self.hp}/{self.max_hp} HP\nLevel {self.level}."
+        # ignore floating point precision errors
+        nice_hp = nice_float(self.hp)
+        hp_str = f"{nice_hp}" if isinstance(nice_hp, int) else f"{nice_hp:.1f}"
+        return f"{nice_float(nice_hp)}/{self.max_hp} HP\nDefence {self.level}."
 
     def use(self, item: Item):
         if item.type is ItemType.DEFENCE:
-            self.defence += 1
+            self.defence += 1 * item.mag
 
-        pass
+        
 
     def take_damage(self, dmg: Union[int, float]) -> int:
-        taken = dmg - self.defence / 2
+        taken = dmg - self.defence / 10
         if taken < 0:
             taken = 0
 
