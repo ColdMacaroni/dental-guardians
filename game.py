@@ -220,8 +220,8 @@ def main():
             else:
                 start_time = time()
 
-                damage_taken = active_scene.enemy.object.get_damage()
-                player.take_damage(damage_taken)
+                damage_taken =  player.take_damage(active_scene.enemy.object.get_damage())
+               
 
                 active_scene.statics["info_box"].object.set_text(
                     f"{active_scene.enemy.object.name} attacked you "
