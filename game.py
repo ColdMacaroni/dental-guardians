@@ -81,7 +81,7 @@ def main():
     itemtype_names = {
         i_type.DAMAGE: "damage",
         i_type.DEFENCE: "defence",
-        i_type.NONE: "nothing"
+        i_type.NONE: "nothing",
     }
     del i_type
 
@@ -203,8 +203,10 @@ def main():
             else:
                 start_time = time()
 
-                active_scene.statics["info_box"].object.set_text(f"You use {status.item.name} "
-                                                             f"and gain {itemtype_names[status.item.type]}!")
+                active_scene.statics["info_box"].object.set_text(
+                    f"You use {status.item.name} "
+                    f"and gain {itemtype_names[status.item.type]}!"
+                )
                 player.use(status.item)
 
         elif status.status is GameStatus.ENEMY_ATTACK:
@@ -220,8 +222,9 @@ def main():
             else:
                 start_time = time()
 
-                damage_taken =  player.take_damage(active_scene.enemy.object.get_damage())
-               
+                damage_taken = player.take_damage(
+                    active_scene.enemy.object.get_damage()
+                )
 
                 active_scene.statics["info_box"].object.set_text(
                     f"{active_scene.enemy.object.name} attacked you "

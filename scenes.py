@@ -128,12 +128,14 @@ def generate_scenes() -> dict[GameStatus, Scene]:
     }
     battle_scene_stuff["big_box"] = {
         "size": (
-            (battle_scene_stuff["textbox"]["pos"][0]
-             + battle_scene_stuff["textbox"]["size"][0])
+            (
+                battle_scene_stuff["textbox"]["pos"][0]
+                + battle_scene_stuff["textbox"]["size"][0]
+            )
             - battle_scene_stuff["menu"]["pos"][0],
-            battle_scene_stuff["textbox"]["size"][1]
-                ),
-        "pos": battle_scene_stuff["menu"]["pos"]
+            battle_scene_stuff["textbox"]["size"][1],
+        ),
+        "pos": battle_scene_stuff["menu"]["pos"],
     }
 
     # ----------------

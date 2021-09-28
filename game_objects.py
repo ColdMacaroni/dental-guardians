@@ -23,6 +23,7 @@ from pygame.transform import scale as transform_scale
 class Player:
     pass
 
+
 def nice_float(num: float) -> Union[int, float]:
     return num if num % 1 else int(num)
 
@@ -433,7 +434,7 @@ class Enemy:
             "defeat": None,
         }
 
-    def load_sprites(self, folder: str, sprites_dict: dict=None) -> None:
+    def load_sprites(self, folder: str, sprites_dict: dict = None) -> None:
         """
         Load the sprites into this thing!
         :param folder: A Folder containing idle.png
