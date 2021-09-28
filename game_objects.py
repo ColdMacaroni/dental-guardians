@@ -589,10 +589,10 @@ class Player:
         return f"{nice_float(nice_hp)}/{self.max_hp} HP\nDefence {self.level}."
 
     def use(self, item: Item):
+        assert item in self.items, f"{item} not it self.items when used"
+        self.items.remove(item)
         if item.type is ItemType.DEFENCE:
             self.defence += 1 * item.mag
-
-        
 
     def take_damage(self, dmg: Union[int, float]) -> int:
         taken = dmg - self.defence / 10
